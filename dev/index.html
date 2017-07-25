@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" />
+        <script src="https://unpkg.com/react@15/dist/react.js"></script>
+        <script src="https://unpkg.com/react-dom@15/dist/react-dom.js "></script>
+
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+        <link rel="stylesheet" href="../dist/style.css" />
+    </head>
+    <body>
+        <h2>FooBar Test</h2>
+
+        <div id="root"></div>
+        <div id="propform"></div>
+
+        <script src="../dist/react-component-starter.js" charset="utf-8"></script>
+        <script>
+        console.log(RelationParamEditor);
+
+        const models = [
+            {pkColumn: "ELEMENT_ID", name: "Project Person-->Person", pkClassName: "Person", fkClassID: 55,
+            fkClassName:"Project Person",fkColumn:"PERSON_ID",
+            parameters:{RELATIONSHIP_LABEL: "Portfolio Projects this Person participates in"},
+            pkClassID:31,relationID:67
+            },
+            {fkClassID:53,fkClassName:"Project Organization",fkColumn:"ORGANIZATION_ID",
+            name:"Project Organization-->Organization",parameters:{'RELATIONSHIP_QUERY_ID' : 1045},
+            pkClassID:34,pkClassName:"Organization",pkColumn:"ELEMENT_ID",relationID:65
+            }
+        ];
+
+        ReactDOM.render(
+            React.createElement( RelationParamEditor.default, {'models':models}),
+            document.getElementById('propform')
+        );
+
+        </script>
+    </body>
+</html>

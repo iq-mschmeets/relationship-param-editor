@@ -1,7 +1,7 @@
 {
-  "name": "react-component-starter",
+  "name": "RelationshipProperties",
   "version": "0.1.0",
-  "description": "Starter kit for React components in es6",
+  "description": "Editor for relationship properties, as component.",
   "main": "./lib/index.js",
   "files": [
     "dist",
@@ -48,6 +48,7 @@
   "devDependencies": {
     "@kadira/storybook": "^2.35.3",
     "@kadira/storybook-deployer": "^1.2.0",
+    "@storybook/react": "^3.1.9",
     "babel-cli": "^6.24.0",
     "babel-core": "^6.24.0",
     "babel-eslint": "^7.2.1",
@@ -75,7 +76,13 @@
     "webpack": "^2.3.2"
   },
   "peerDependencies": {
-    "react": "^0.14.0 || ^15.0.0",
-    "react-dom": "^0.14.0 || ^15.0.0"
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0"
+  },
+  "dependencies": {
+    "exports-loader": "^0.6.4",
+    "imports-loader": "^0.7.1",
+    "postal": "^2.0.5",
+    "save": "^2.3.1"
   }
 }

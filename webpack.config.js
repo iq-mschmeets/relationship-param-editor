@@ -10,8 +10,8 @@ const config = {
     modules: ['src', 'node_modules'],
   },
   output: {
-    library: pkg.name,
-    libraryTarget: 'umd',
+    library: 'RelationParamEditor',
+    libraryTarget: 'var',
   },
   module: {
     rules: [
@@ -21,8 +21,13 @@ const config = {
         loader: 'babel-loader',
         options: {
           cacheDirectory: true,
-        },
+        }
+
       },
+      {
+          test: /\.css$/,
+        loader:'style-loader!css-loader'
+      }
     ],
   },
   plugins: [
@@ -32,11 +37,13 @@ const config = {
   ],
   externals: {
     // Don't package React with the component.
-    react: 'react',
+    react: 'React',
     // If your component depends on external utility libraries like lodash,
     // you might want to add them here.
     // Refer to https://webpack.js.org/configuration/externals/ for more info.
   }
+
+
 };
 
 if (env === 'production') {
@@ -55,5 +62,7 @@ if (env === 'production') {
     })
   );
 }
+
+
 
 module.exports = config;
