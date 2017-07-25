@@ -3,9 +3,12 @@ import ReactDOM from 'react-dom';
 import postal from 'postal';
 import registerServiceWorker from './registerServiceWorker';
 import RelationParamEditor from './RelationParamEditor';
+import EditButton from './common/EditButton';
 import './index.css';
 
 export default RelationParamEditor;
+export { EditButton as EditButton };
+const PageBus = window.PageBus;
 
 // Test data.
 const models = [
@@ -20,18 +23,4 @@ const models = [
     }
 ];
 
-const PageBus = window.PageBus;
-
-console.log("index.js: App: %o", RelationParamEditor);
-try{
-// ReactDOM.render(
-//     React.createElement( RelationParamEditor, {'models':models}),
-//     document.getElementById('propform')
-// );
-}catch(er){
-    console.error( er );
-}
-
-//ReactDOM.render( <App models={models} />, document.getElementById('propform'));
-// ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
