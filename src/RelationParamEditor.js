@@ -20,19 +20,14 @@ export default class RelationParamEditor extends React.Component {
        };
        this.oncancel = this.oncancel.bind(this);
        this.onok = this.onok.bind(this);
+       this.onUpdate = this.onUpdate.bind(this);
 //this.handle = PageBus.subscribe('',function(topic,payload){console.log("%s,%o",topic,payload)});
-       this.subscription = postal.subscribe({
-       		channel: "class-meta-data",
-       		topic: "select-class",
-       		callback: function(data, envelope) {
-       			// `data` is the data published by the publisher.
-       			// `envelope` is a wrapper around the data & contains
-       			// metadata about the message like the channel, topic,
-       			// timestamp and any other data which might have been
-       			// added by the sender.
-                this.setState({'model':{'models':data}});
-       		}
-       	});
+        var that = this;
+        this.subscription = postal.subscribe({
+           	channel: "class-meta-data",
+           	topic: "select-class",
+           	callback: this.onUpdate
+        });
 
 
 console.log("RelationParamEditor: props: %o", props);
@@ -40,6 +35,15 @@ console.log("RelationParamEditor: props: %o", props);
     stopIt(evt){
         evt.preventDefault();
         evt.stopPropagation();
+    }
+    onUpdate( data, envelope ){
+        // `data` is the data published by the publisher.
+        // `envelope` is a wrapper around the data & contains
+        // metadata about the message like the channel, topic,
+        // timestamp and any other data which might have been
+        // added by the sender.
+console.log("postal-subscribe: %o, %o", data, envelope);
+        this.setState({'model':{'models':data}});
     }
     oncancel(){}
     onok(){}
