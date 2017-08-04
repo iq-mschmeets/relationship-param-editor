@@ -53,6 +53,7 @@ class ParameterFormComponent extends React.Component{
 
     render(){
         //console.log("ParameterFormComponent.render: %o, %o",this.props.model, this.state.model);
+        //TODO: Use RELATIONSHIP_QUERY_LOOKUP too.
         if( this.props.model ){
             let xslField = null;
             // Don't show an XSLT selector if we're using the defualt query?

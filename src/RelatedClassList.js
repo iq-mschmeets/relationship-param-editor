@@ -20,7 +20,7 @@ class RelatedClassList extends React.Component{
         }
         console.log( "RelatedClassList: %s, %s", this.state.selected,rid );
     }
-	
+
 	render(){
         let self = this;
   	    return (
@@ -31,7 +31,7 @@ class RelatedClassList extends React.Component{
 	            return <RelationLink key={idx}
 	                                ref={idx}
 	                                relationID={relation.relationID}
-	                                name={relation.pkClassName}
+	                                name={relation.fkClassName}
 									active={relation.relationID === self.state.selected}
 	                                update={self.handleSelection.bind(self)}/>
 	            })}
