@@ -21,6 +21,7 @@ export default class RelationParamEditor extends React.Component {
        this.oncancel = this.oncancel.bind(this);
        this.onok = this.onok.bind(this);
        this.onUpdate = this.onUpdate.bind(this);
+       this.reorder = this.reorder.bind(this);
 //this.handle = PageBus.subscribe('',function(topic,payload){console.log("%s,%o",topic,payload)});
         var that = this;
         this.subscription = postal.subscribe({
@@ -32,10 +33,12 @@ export default class RelationParamEditor extends React.Component {
 
 console.log("RelationParamEditor: props: %o", props);
     }
+
     stopIt(evt){
         evt.preventDefault();
         evt.stopPropagation();
     }
+
     onUpdate( data, envelope ){
         // `data` is the data published by the publisher.
         // `envelope` is a wrapper around the data & contains
@@ -45,6 +48,8 @@ console.log("RelationParamEditor: props: %o", props);
 console.log("postal-subscribe: %o, %o", data, envelope);
         this.setState({'model':{'models':data}});
     }
+
+    reorder(id,from,to){console.log("RelationParamEditor.reorder: %o",arguments);}
     oncancel(){}
     onok(){}
 
@@ -70,7 +75,7 @@ console.log("postal-subscribe: %o, %o", data, envelope);
         try{
             var data = this.state.model.models;
 console.log("RelationParamEditor.render: data: %o, state: %o", data, this.state);
-            return <RelatedClassProperties models={data} />
+            return <RelatedClassProperties models={data} reorder={this.reorder}/>
         }catch(er){
             console.error(er);
             return null;

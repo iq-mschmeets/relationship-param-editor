@@ -71,3 +71,9 @@ h4.section-head{
 .filter-search-list .itemLabel{ }
 .filter-search-list .itemID{ font-size: .8em; font-style: italic; padding-left: 15px;}
 .help-block{ margin-bottom: 10px; font-size: .8em;}
+
+li.placeholder {background: rgb(255,240,120);}
+li.placeholder:before {
+  content: "Drop here";
+  color: rgb(225,210,90);
+}

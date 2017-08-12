@@ -10,6 +10,7 @@ class RelatedClassProperties extends React.Component {
     constructor( props ) {
         super( props );
         this.handleClassSelection = this.handleClassSelection.bind( this );
+        this.reorder = this.reorder.bind( this );
         this.onSave = this.onSave.bind( this );
         this.state = {};
         console.log( 'RelatedClassProperties.props %o', props );
@@ -20,7 +21,11 @@ class RelatedClassProperties extends React.Component {
             'selected': obj.selected
         } );
     }
-    
+
+    reorder(id,from,to){
+        console.log("RelatedClassProperties.reorder: %o",arguments);
+    }
+
     /**
      * getSelectedModel finds the relationship model for the selected state.
      * @return {Object}
@@ -71,10 +76,14 @@ class RelatedClassProperties extends React.Component {
         return (
             <div className="row">
                 <div className="col-xs-3">
-                    <RelatedClassList models={this.props.models} update={this.handleClassSelection}/>
+                    <RelatedClassList models={this.props.models}
+                                      update={this.handleClassSelection}
+                                      reorder={this.reorder}/>
                 </div>
                 <div className="col-xs-9">
-                    <ParameterFormComponent model={this.getSelectedModel()} onSave={this.onSave} saving={this.state.saving}/>
+                    <ParameterFormComponent model={this.getSelectedModel()}
+                                            onSave={this.onSave}
+                                            saving={this.state.saving}/>
                 </div>
             </div>
         )
