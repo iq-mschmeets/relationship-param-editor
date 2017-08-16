@@ -14,6 +14,11 @@ const CONTROLLER_OPTIONS = [
     {'text':'', value:''}
 ];
 
+const DISPLAY_OPTIONS = [
+    {'text' : 'Normal', value: false},
+    {'text' : 'Always Expand', value: true}
+];
+
 /**
  A form component to display and update Relationship parameters
  The initial props object is the Relationship definition from the class
@@ -76,6 +81,11 @@ class ParameterFormComponent extends React.Component{
                     <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_LABEL']||''}
                                             label="Label" parameter="RELATIONSHIP_LABEL" onChange={this.onChange}
                                             help="This label is used in the display." />
+                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_EXPANDED']}
+                                     label="Expanded" parameter="RELATIONSHIP_DISPLAY_EXPANDED" onChange={this.onChange}
+                                     help="This controls the initial display. Is this replationship expanded automatically on page load?"
+                                     options={DISPLAY_OPTIONS}
+                                     defaultValue="None"/>
                     <FilterSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_ID']||'Automatic'}
                                             label="Query" parameter="RELATIONSHIP_QUERY_ID" onChange={this.onChange}
                                             help="This controls the query used to produce the display." />

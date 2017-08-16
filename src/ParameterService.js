@@ -24,12 +24,12 @@ function ParameterService( paramsToSave ){
            // This is called even on 404 etc
            // so check the status
            if (req.status === 200) {
-               console.log("onload.200");
+               console.log("ParameterService.onload.200");
              // Resolve the promise with the response text
              resolve(JSON.parse(req.response));
            }
            else {
-               console.log("onload.other");
+               console.log("ParmeterService.onload.other");
              // Otherwise reject with the status text
              // which will hopefully be a meaningful error
             //  reject(Error(req.statusText));
@@ -40,7 +40,7 @@ function ParameterService( paramsToSave ){
          // Handle network errors
          req.onerror = function() {
            //reject(Error("Network Error"));
-           console.log("ONERROR: %o", arguments);
+           console.log("ParameterService.ONERROR: %o", arguments);
            resolve(arguments);
          };
 

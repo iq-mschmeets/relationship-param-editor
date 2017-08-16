@@ -38,7 +38,7 @@ class RelatedClassProperties extends React.Component {
                 return val === model.relationID;
             } );
             rval = mods[ 0 ];
-            // console.log("APP: get selected model: %s, %o", val, rval);
+console.log("RelatedClasProperties: get selected model: %s, %o", val, rval);
         }
         return rval;
     }
@@ -59,7 +59,7 @@ class RelatedClassProperties extends React.Component {
                 'typeID': RELATIONSHIP_PARAMETER_TYPE
             } )
         } );
-        console.log( "RelatedClasProperties.onSave params: %o", params );
+console.log( "RelatedClasProperties.onSave params: %o", params );
         this.setState( {
             'saving': true
         } );
@@ -67,7 +67,7 @@ class RelatedClassProperties extends React.Component {
             setTimeout( () => this.setState( {
                 'saving': false
             } ), MESSAGE_DURATION );
-            console.log( "PSOT-SAVE: %o", rsp )
+console.log( "RelatedClassProperties.PS-SAVE: %o", rsp )
         } );
     }
 

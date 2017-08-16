@@ -54,7 +54,7 @@ if (env === 'production') {
       beautify: false,
       comments: false,
       compress: {
-        drop_console: true,
+    //    drop_console: true,
       },
       mangle: {
         screw_ie8 : true,
