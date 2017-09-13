@@ -95,11 +95,7 @@ console.log("ParameterFormComp: %o, %o", this.state, newState);
                                             label="Query" parameter="RELATIONSHIP_QUERY_ID" onChange={this.onChange}
                                             help="This controls the query used to produce the XSLT, or default, display." />
                     {xslField}
-                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_CONTROLLER']}
-                                     label="Controller" parameter="RELATIONSHIP_CONTROLLER" onChange={this.onChange}
-                                     help="This controls the data editing features of the display."
-                                     options={CONTROLLER_OPTIONS}
-                                     defaultValue="None"/>
+
                     <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_SELECTOR']||''}
                                              label="Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR" onChange={this.onChange}
                                              help="To place this relationship in a specific place in the page, enter an HTML selector." />
