@@ -4,7 +4,8 @@ class EditButton extends React.Component{
   render(){
       const SearchPanelButtonGroupButton = {
         borderRadius: '0px',
-        marginLeft: '-1px'
+        marginLeft: '-1px',
+        padding: '9px 12px'
       }
       return (
         <button type="button" className="btn btn-primary dropdown-toggle"

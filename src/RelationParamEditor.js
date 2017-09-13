@@ -22,8 +22,7 @@ export default class RelationParamEditor extends React.Component {
        this.onok = this.onok.bind(this);
        this.onUpdate = this.onUpdate.bind(this);
        this.reorder = this.reorder.bind(this);
-//this.handle = PageBus.subscribe('',function(topic,payload){console.log("%s,%o",topic,payload)});
-        var that = this;
+
         this.subscription = postal.subscribe({
            	channel: "class-meta-data",
            	topic: "select-class",
@@ -34,10 +33,6 @@ export default class RelationParamEditor extends React.Component {
 console.log("RelationParamEditor: props: %o", props);
     }
 
-    stopIt(evt){
-        evt.preventDefault();
-        evt.stopPropagation();
-    }
 
     onUpdate( data, envelope ){
         // `data` is the data published by the publisher.

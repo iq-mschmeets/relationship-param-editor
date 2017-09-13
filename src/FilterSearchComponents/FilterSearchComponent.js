@@ -25,10 +25,8 @@ class FilterSearchComponent extends React.Component{
         let searchTerm = obj.value;
         // How it should work.
         //.then( (response)=>{return response.json()} )
-        
         var prms = FilterSearchService( searchTerm );
-        prms.then((data)=>{ let comp = data.components; console.log("data:%o",comp); this.setState({'searchItems' : comp}) });
-
+        prms.then((data)=>{ let comp = data; console.log("data:%o",comp); this.setState({'searchItems' : comp}) });
 
         // How it works for now.
         // Fetch is not as easy as $.ajax, and when used with webpack dev

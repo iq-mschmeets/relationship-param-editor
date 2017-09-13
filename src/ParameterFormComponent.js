@@ -51,8 +51,11 @@ class ParameterFormComponent extends React.Component{
         // obj is { parameter: '', value:''}, in this case, it will be a parameter
         // name and value.
         const newState = {}
+        if( obj.parameter == 'RELATIONSHIP_QUERY_ID' && !Number.isInteger(obj.value) ){
+            obj.parameter = 'RELATIONSHIP_QUERY_LOOKUP';
+        }
         newState[obj.parameter] = obj.value;
-
+console.log("ParameterFormComp: %o, %o", this.state, newState);
         this.setState( Object.assign(this.state.model.parameters, newState) );
     }
 
@@ -62,39 +65,44 @@ class ParameterFormComponent extends React.Component{
         if( this.props.model ){
             let xslField = null;
             // Don't show an XSLT selector if we're using the defualt query?
-            // Is this correct, or should it always be an option?
-            if( this.state.model.parameters['RELATIONSHIP_QUERY_ID']  ){
+            // Is this correct, or should it always be an option? No, only for optional queries.
+            if( this.state.model.parameters['RELATIONSHIP_QUERY_ID'] || this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP'] ){
                 xslField = <XformSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_XFORM']||''}
                                         label="XSLT Xform" parameter="RELATIONSHIP_QUERY_XFORM" onChange={this.onChange}
-                                        help="This controls the XSLT used to produce the display from the query." />;
+                                        help="This controls the (optional) XSLT used to produce the display from the query." />;
             }
 
             return(
             <div>
                 <h4 className="section-head">Properties</h4>
 
-                <form onSubmit={this.stopIt}>
+                <form onSubmit={this.stopIt} className="rel-props">
                     <ReadOnlyInputFormGroup value={this.state.model.relationID} help=""
                                             label="RelationID" />
                     <ReadOnlyInputFormGroup value={this.state.model.name} help=""
                                             label="Name" />
                     <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_LABEL']||''}
                                             label="Label" parameter="RELATIONSHIP_LABEL" onChange={this.onChange}
-                                            help="This label is used in the display." />
+                                            help="This label is used in the EDR display." />
                     <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_EXPANDED']}
                                      label="Expanded" parameter="RELATIONSHIP_DISPLAY_EXPANDED" onChange={this.onChange}
-                                     help="This controls the initial display. Is this replationship expanded automatically on page load?"
+                                     help="This controls the initial display. Should this replationship expand automatically on page load?"
                                      options={DISPLAY_OPTIONS}
                                      defaultValue="None"/>
-                    <FilterSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_ID']||'Automatic'}
+                    <FilterSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP']
+                                                 || this.state.model.parameters['RELATIONSHIP_QUERY_ID']
+                                                 || 'Default'}
                                             label="Query" parameter="RELATIONSHIP_QUERY_ID" onChange={this.onChange}
-                                            help="This controls the query used to produce the display." />
+                                            help="This controls the query used to produce the XSLT, or default, display." />
                     {xslField}
                     <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_CONTROLLER']}
                                      label="Controller" parameter="RELATIONSHIP_CONTROLLER" onChange={this.onChange}
-                                     help="This controls the editing features of the display."
+                                     help="This controls the data editing features of the display."
                                      options={CONTROLLER_OPTIONS}
                                      defaultValue="None"/>
+                    <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_SELECTOR']||''}
+                                             label="Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR" onChange={this.onChange}
+                                             help="To place this relationship in a specific place in the page, enter an HTML selector." />
 
                     <OkCancelButtonGroup onsubmit={this.oncancel} onok={this.onok} saving={this.props.saving}/>
                 </form>

@@ -17,7 +17,7 @@ const searchPanelDropDownLG = {
 const searchPanelDropDownMenu = {
     minWidth: '500px',
     marginTop: '-1px',
-    padding: '6px 20px'
+    padding: '5px 5px'
 };
 
 class XformSelectionInput extends React.Component{
@@ -28,7 +28,7 @@ class XformSelectionInput extends React.Component{
 
         this.handleChange = this.handleChange.bind( this );
         this.onButtonClick = this.onButtonClick.bind( this );
-        this.setXformSelection = this.setXformSelection.bind( this );
+        // this.setXformSelection = this.setXformSelection.bind( this );
     }
 
     componentWillReceiveProps(nextProps){
@@ -47,14 +47,14 @@ console.log("XformSelectionInput.handleChange: %o, %o",event, this.props.onChang
     onButtonClick(event){
         this.setState({'searching':!this.state.searching});
     }
-
+/*
     setXformSelection(obj){
         this.setState({'searching':!this.state.searching, 'value':obj});
         if( this.props.valueChange ){
             this.props.valueChange( {'value' : this.state.value} );
         }
     }
-
+*/
     render(){
 
         return (
@@ -75,7 +75,7 @@ console.log("XformSelectionInput.handleChange: %o, %o",event, this.props.onChang
                                             role="menu" style={searchPanelDropDownMenu}>
                                           <div className="form-horizontal" onClick={this.stopIt}>
                                             <XformSearchComponent
-                                                onXformSelection={this.setXformSelection}/>
+                                                onXformSelection={this.handleChange}/>
                                           </div>
                                       </div>
                                   </div>

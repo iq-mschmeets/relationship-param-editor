@@ -20,7 +20,7 @@ class SearchPanel extends React.Component {
         const searchPanelDropDownMenu = {
             minWidth: '500px',
             marginTop: '-1px',
-            padding: '6px 20px'
+            padding: '5px 5px'
         };
         const searchPanelFormGroup = {
             marginLeft: '0px',

@@ -30,7 +30,7 @@ const searchPanelDropDownLG = {
 const searchPanelDropDownMenu = {
     minWidth: '500px',
     marginTop: '-1px',
-    padding: '6px 20px'
+    padding: '5px 5px'
 };
 
 /*
@@ -45,7 +45,7 @@ class FilterSelectionInput extends React.Component{
     constructor( props ){
         super( props );
 
-        this.state = Object.assign({},props,{ isModalOpen: false, 'label':'Filter' });
+        this.state = Object.assign({},props,{ isModalOpen: false, 'labelText':'Filter' });
 
         this.handleChange = this.handleChange.bind( this );
         this.onButtonClick = this.onButtonClick.bind( this );
@@ -56,11 +56,14 @@ class FilterSelectionInput extends React.Component{
         this.setState( Object.assign(this.state, nextProps,{ isModalOpen: false }) );
     }
 
-    handleChange(event) {
-        const val = event.target ? event.target.value : event.id;
+    handleChange(payload) {
+        const val = payload.lookup ? payload.lookup : payload.id;
+        const param = payload.lookup ? 'RELATIONSHIP_QUERY_LOOKUP' : 'RELATIONSHIP_QUERY_ID';
+
+console.log("FilterSearchInput.handleChange: %o, %s, %s",payload, param,val);
         this.setState({value: val});
         if( this.props.onChange ){
-            this.props.onChange( { 'parameter': this.props.parameter, 'value': val });
+            this.props.onChange( { 'parameter': param, 'value': val });
         }
     }
 
@@ -69,6 +72,11 @@ class FilterSelectionInput extends React.Component{
     }
 
     setFilterSelection(obj){
+        if( obj.lookup ){
+            this.setState({'searching':!this.state.searching, 'value':obj.lookup});
+        } else {
+            this.setState({'searching':!this.state.searching, 'value':obj.id});
+        }
         this.setState({'searching':!this.state.searching, 'value':obj.id});
         if( this.props.valueChange ){
             this.props.valueChange( {'value' : this.state.value} );
@@ -76,10 +84,10 @@ class FilterSelectionInput extends React.Component{
     }
 
     render(){
-
+console.log("FilterSelectionInput: %o", this.state);
         return (
                 <div className="form-group row">
-                  <label className="col-xs-2 control-label" htmlFor="relationship_query">{this.state.label}:</label>
+                  <label className="col-xs-2 control-label" htmlFor="relationship_query">{this.state.labelText}:</label>
                   <div className="col-xs-10">
                       <div className="input-group" style={advSearchStyle}>
                           <input type="text" className="form-control"

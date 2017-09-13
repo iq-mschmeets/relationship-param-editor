@@ -1,5 +1,7 @@
 
 function getSpecification( term ){
+    return `?term=${term}&type=22`;
+    /*
     return JSON.stringify({
         id : 0,
         pageNumber : "-1",
@@ -9,6 +11,7 @@ function getSpecification( term ){
             "query" : term
         }
     });
+    */
 }
 
 /**
@@ -35,12 +38,12 @@ function FilterSearchService( term ){
 
     //var data = new FormData();
     //data.append( "requestSpecification", getSpecification( term ) );
-    var data = "requestSpecification="+getSpecification(term);
+    //var data = "requestSpecification="+getSpecification(term);
 
     return new Promise(function(resolve, reject){
         // Do the usual XHR stuff
          var req = new XMLHttpRequest();
-         req.open('POST', '../request/jsonData');
+         req.open('GET', '../request/namedTextLocator'+getSpecification(term));
          req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
          req.setRequestHeader('Accept' , "application/json");
 
@@ -69,7 +72,7 @@ function FilterSearchService( term ){
          };
 
          // Make the request
-         req.send( data );
+         req.send( );
 
     });
 

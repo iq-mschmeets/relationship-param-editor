@@ -46,6 +46,7 @@ class RelatedClassList extends React.Component{
 			<div>
 				<div>
 		    	    <h4 className="pull-left">Related Classes</h4>
+					{/*
 					<div className="btn-group pull-right" style={{marginTop:"10px"}}>
 						<button className="btn btn-default btn-xs"
 							    onClick={this.onMoveDown}>
@@ -57,6 +58,7 @@ class RelatedClassList extends React.Component{
 						</button>
 
 					</div>
+				*/}
 				</div>
 				<br style={{clear:"both"}} />
 	            <ul className="list-group" >
