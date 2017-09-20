@@ -1,6 +1,5 @@
-# React Component Starter
+# Based on React Component Starter
 
-Starter project for React components written in ES6.
 
 ## Getting Started
 
