@@ -31,8 +31,7 @@ $ npm run prepublish
 ## TODO
 
 - Add development instructions
-- Add instructions on including CSS
 
 ## License
 
-MIT
+May not be used without permission.
