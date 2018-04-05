@@ -7,6 +7,7 @@ import EditButton from './common/EditButton';
 import './index.css';
 
 export default RelationParamEditor;
+//export {UserMarkupIncludes as UserMarkupIncludes };
 export { EditButton as EditButton };
 const PageBus = window.PageBus;
 

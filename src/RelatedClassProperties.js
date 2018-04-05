@@ -44,12 +44,13 @@ console.log("RelatedClasProperties: get selected model: %s, %o", val, rval);
     }
 
     /**
-     * [onSave description]
+     * Saves the parameters for one relationship.
      * @param  {Object} obj  literal with relationship parameter values
      * @return {void}
      */
     onSave( obj ) {
         console.log( "RelatedClasProperties.onSave args: %o, %o", obj, this.state.selected );
+
         const params = [];
         Object.keys( obj ).forEach( ( key ) => {
             params.push( {
