@@ -25,7 +25,11 @@ class XformSearchComponent extends React.Component{
         let searchTerm = obj.value;
 
         var prms = XSLTSearchService( searchTerm );
-        prms.then((data)=>{ let comp = data.files; console.log("data:%o",comp); this.setState({'searchItems' : comp}) });
+        prms.then((data)=>{
+            let comp = data.files;
+            console.log("data:%o",comp);
+            this.setState({'searchItems' : comp})
+        });
         // How it works for now.
         // Fetch is not as easy as $.ajax, and when used with webpack dev
         // server IQ is not same domain.

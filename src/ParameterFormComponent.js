@@ -20,7 +20,7 @@ const DISPLAY_OPTIONS = [
 ];
 
 const RENDER_OPTIONS = [
-    {'text' : 'Default', value: 'default'},
+    {'text' : 'Default', value: ''},
     {'text' : 'XSLT', value: 'xslt'}
     // {'text' : 'Stamp', value:'stamp'}
 ];
@@ -40,6 +40,7 @@ class ParameterFormComponent extends React.Component{
         this.oncancel = this.oncancel.bind(this);
         this.onok = this.onok.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.onResetFilterOptions = this.onResetFilterOptions.bind(this);
     }
 
     componentWillReceiveProps( newProps ){
@@ -53,15 +54,29 @@ class ParameterFormComponent extends React.Component{
         }
     }
 
+    isValued( arg ){
+        return (typeof arg != 'undefined');
+    }
+
     onChange(obj){
         // obj is { parameter: '', value:''}, in this case, it will be a parameter
         // name and value.
         const newState = {}
-        if( obj.parameter == 'RELATIONSHIP_QUERY_ID' && !Number.isInteger(obj.value) ){
+        if( obj.parameter == 'RELATIONSHIP_QUERY_ID' && (obj.value !== '' && !Number.isInteger(obj.value)) ){
             obj.parameter = 'RELATIONSHIP_QUERY_LOOKUP';
         }
-        newState[obj.parameter] = obj.value;
-console.log("ParameterFormComp: %o, %o", this.state, newState);
+        newState[obj.parameter] = this.isValued(obj.value) ? obj.value : '';
+console.log("ParameterFormComp: %o, %o, %s", this.state, newState,Number.isInteger(obj.value));
+        this.setState( Object.assign(this.state.model.parameters, newState) );
+    }
+
+    onResetFilterOptions(){
+        console.log("onResetFilterOptions ");
+        const newState = {};
+        newState['RELATIONSHIP_QUERY_ID'] = '';
+        newState['RELATIONSHIP_LOOKUP'] = '';
+        newState['RELATIONSHIP_QUERY_XFORM'] = '';
+        newState['RELATIONSHIP_QUERY_RENDERER'] = '';
         this.setState( Object.assign(this.state.model.parameters, newState) );
     }
 
@@ -70,13 +85,15 @@ console.log("ParameterFormComp: %o, %o", this.state, newState);
         //TODO: Use RELATIONSHIP_QUERY_LOOKUP too.
         if( this.props.model ){
             let xslField = null;
-// Need to shaw a Renderer selector!!!
+            let renderField = null;
             // Don't show an XSLT selector if we're using the defualt query?
-            // Is this correct, or should it always be an option? No, only for optional queries.
+            // Is this correct, or should it always be an option?
+            // No, only for optional queries, for now.
             if( (this.state.model.parameters['RELATIONSHIP_QUERY_ID'] || this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP'])
                 && (this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'] == 'xslt') ){
                 xslField = <XformSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_XFORM']||''}
-                                        label="XSLT Xform" parameter="RELATIONSHIP_QUERY_XFORM" onChange={this.onChange}
+                                        label="XSLT Xform" parameter="RELATIONSHIP_QUERY_XFORM"
+                                        onChange={this.onChange}
                                         help="This controls the (optional) XSLT used to produce the display from the query." />;
             }
 
@@ -90,30 +107,37 @@ console.log("ParameterFormComp: %o, %o", this.state, newState);
                     <ReadOnlyInputFormGroup value={this.state.model.name} help=""
                                             label="Name" />
                     <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_LABEL']||''}
-                                            label="Label" parameter="RELATIONSHIP_LABEL" onChange={this.onChange}
+                                            label="Label" parameter="RELATIONSHIP_LABEL"
+                                            onChange={this.onChange}
                                             help="This label is used in the EDR display." />
                     <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DESCRIPTION']||''}
-                                            label="Description" parameter="RELATIONSHIP_DESCRIPTION" onChange={this.onChange}
+                                            label="Description" parameter="RELATIONSHIP_DESCRIPTION"
+                                            onChange={this.onChange}
                                             help="To provide the user with more information about the relationship." rows="5" />
                     <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_EXPANDED']}
-                                     label="Expanded" parameter="RELATIONSHIP_DISPLAY_EXPANDED" onChange={this.onChange}
+                                     label="Expanded" parameter="RELATIONSHIP_DISPLAY_EXPANDED"
+                                     onChange={this.onChange}
                                      help="This controls the initial display. Should this replationship expand automatically on page load?"
                                      options={DISPLAY_OPTIONS}
                                      defaultValue="None"/>
                     <FilterSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP']
                                                  || this.state.model.parameters['RELATIONSHIP_QUERY_ID']
                                                  || 'Default'}
-                                            label="Query" parameter="RELATIONSHIP_QUERY_ID" onChange={this.onChange}
-                                            help="This controls the query used to produce the XSLT, or default, display." />
+                                            label="Query" parameter="RELATIONSHIP_QUERY_ID"
+                                            onChange={this.onChange}
+                                            onReset={this.onResetFilterOptions}
+                                            help="This controls the query used to produce the display." />
                     <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER']}
-                                     label="Renderer" parameter="RELATIONSHIP_QUERY_RENDERER" onChange={this.onChange}
-                                     help="This determines how the data is rendered."
+                                     label="Renderer" parameter="RELATIONSHIP_QUERY_RENDERER"
+                                     onChange={this.onChange}
+                                     help="This determines how the query data is rendered."
                                      options={RENDER_OPTIONS}
                                      defaultValue="Default"/>
                     {xslField}
 
                     <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_SELECTOR']||''}
-                                             label="Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR" onChange={this.onChange}
+                                             label="Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR"
+                                             onChange={this.onChange}
                                              help="To place this relationship in a specific place in the page, enter an HTML selector." />
 
                     <OkCancelButtonGroup onsubmit={this.oncancel} onok={this.onok} saving={this.props.saving}/>

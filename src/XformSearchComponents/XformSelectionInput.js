@@ -1,8 +1,8 @@
 import React from 'react';
 
-import EditButton from '../common/EditButton.js';
-
+import EditClearButton from '../common/EditClearButton.js';
 import XformSearchComponent from './XformSearchComponent.js';
+
 
 const advSearchStyle = {
     //  width: '500px',
@@ -17,46 +17,62 @@ const searchPanelDropDownLG = {
 const searchPanelDropDownMenu = {
     minWidth: '500px',
     marginTop: '-1px',
-    padding: '5px 5px'
+    padding: '5px 5px',
+    border: '1px solid #eaeaea'
 };
 
 class XformSelectionInput extends React.Component{
     constructor( props ){
         super( props );
 
-        this.state = Object.assign({},props,{ isModalOpen: false, 'label':'Filter' });
+        this.state = Object.assign({},props,{ isModalOpen: false, 'label':'Filter',searching:false });
 
         this.handleChange = this.handleChange.bind( this );
-        this.onButtonClick = this.onButtonClick.bind( this );
+        this.onEditButtonClick = this.onEditButtonClick.bind( this );
+        this.onClearButtonClick = this.onClearButtonClick.bind( this );
         // this.setXformSelection = this.setXformSelection.bind( this );
     }
 
     componentWillReceiveProps(nextProps){
-        this.setState( Object.assign(this.state,nextProps,{ isModalOpen: false }) );
+        this.setState( Object.assign(this.state,nextProps,{ isModalOpen: false,searching:false }) );
     }
 
     handleChange(event) {
 console.log("XformSelectionInput.handleChange: %o, %o",event, this.props.onChange);
         const val = event.target ? event.target.value : event;
-        this.setState({value: val});
         if( this.props.onChange ){
-            this.props.onChange( { 'parameter': this.props.parameter, 'value': val });
+            this.props.onChange( {
+                'parameter': this.props.parameter,
+                'value': val
+            });
         }
+        this.setState({
+            'searching' : false,
+            'value' : val
+        });
     }
 
-    onButtonClick(event){
+    onEditButtonClick(event){
         this.setState({'searching':!this.state.searching});
     }
-/*
-    setXformSelection(obj){
-        this.setState({'searching':!this.state.searching, 'value':obj});
-        if( this.props.valueChange ){
-            this.props.valueChange( {'value' : this.state.value} );
+
+    onClearButtonClick(event){
+//console.log("XformSelectionInput.onClearButtonClick: %o, %o",this.props, this.props.onChange);
+        this.setState({'value' : '', 'searching':false});
+        if( this.props.onChange ){
+            this.props.onChange( {
+                'parameter': this.props.parameter,
+                'value': ''
+            });
         }
     }
-*/
-    render(){
 
+    render(){
+        let searchComponent = null;
+        if( this.state.searching ){
+            searchComponent = <XformSearchComponent onXformSelection={this.handleChange}/>;
+        }
+        console.log('XformSelectionInput.render ',searchComponent);
         return (
                 <div className="form-group row">
                   <label className="col-xs-2 control-label" htmlFor="relationship_xform">{this.props.label}:</label>
@@ -70,20 +86,17 @@ console.log("XformSelectionInput.handleChange: %o, %o",event, this.props.onChang
                           <div className="input-group-btn">
                               <div className="btn-group" role="group" style={searchPanelInputButtonGroup}>
                                   <div className="dropdown dropdown-lg" style={searchPanelDropDownLG}>
-                                      <EditButton onClick={this.onButtonClick}/>
-                                      <div className="dropdown-menu dropdown-menu-right"
-                                            role="menu" style={searchPanelDropDownMenu}>
-                                          <div className="form-horizontal" onClick={this.stopIt}>
-                                            <XformSearchComponent
-                                                onXformSelection={this.handleChange}/>
-                                          </div>
-                                      </div>
+                                      <EditClearButton onEditClick={this.onEditButtonClick}
+                                                       onClearClick={this.onClearButtonClick} />
                                   </div>
                               </div>
                           </div>
                       </div>
-                      <em className="help-block">{this.state.help}</em>
+                      <div>
+                      {searchComponent}
+                      </div>
                   </div>
+                  <em className="help-block">{this.state.help}</em>
               </div>
           );
 
@@ -91,12 +104,10 @@ console.log("XformSelectionInput.handleChange: %o, %o",event, this.props.onChang
 
     stopIt(evt){
         evt.stopPropagation();
-
     }
 
     openModal() {
       this.setState({ isModalOpen: true });
-      //<button className="btn btn-default" onClick={() => this.openModal()}>Select Filter</button>
     }
 
     closeModal() {

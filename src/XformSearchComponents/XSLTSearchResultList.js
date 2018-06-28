@@ -16,7 +16,7 @@ console.log('XSLT Search res lis invokeChange: %o, %o', obj, this.props.onClick)
         }
     }
     render(){
-        if( !this.props.items ){ return <ul style={{minHeight:'100px',height:'100px'}}></ul>;}
+        if( !this.props.items ){ return <ul style={{minHeight:'100px',height:'200px'}}></ul>;}
         return (
             <ul className="filter-search-list list-unstyled">
                 {this.props.items.map((item, idx)=>{

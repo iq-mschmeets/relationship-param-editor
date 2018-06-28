@@ -8,10 +8,13 @@ class XformSearchInput extends React.Component{
         super( props );
         this.state = Object.assign({}, props);
         this.handleChange = this.handleChange.bind( this );
-
+        this.onClick = this.onClick.bind(this);
     }
     handleChange(event) {
         this.setState({value: event.target.value});
+    }
+    onClick(event){
+        this.props.onChange({'value':this.getValue()});
     }
     getValue(){
         return this.state.value;
@@ -25,9 +28,9 @@ class XformSearchInput extends React.Component{
                 <input type="text" className="form-control"
                        placeholder="Search..." id="relationship_xform"
                        defaultValue={this.props.value}
-                       onChange={this.handleChange}/>
+                       />
                  <span className="input-group-btn">
-                   <button className="btn btn-primary" type="button">
+                   <button className="btn btn-primary" type="button" onClick={this.onClick}>
                        Search
                        {/*<span className="glyphicon glyphicon-search"></span>*/}
                    </button>
@@ -35,17 +38,7 @@ class XformSearchInput extends React.Component{
             </div>
         );
     }
-    componentDidMount() {
-        // Hack to workaround event delegation in Bootstrap vs. React.
-        // don't want click events in this component to reach Bootstrap.
-        // The click event will close the Bootstrap drop down.
-        ReactDOM.findDOMNode(this).addEventListener('click', (event) => {
-          event.stopPropagation();
-          if( event.target.tagName.toLowerCase() === "button" ){
-              this.props.onChange({'value':this.getValue()});
-          }
-        }, false);
-    }
+
 
 }
 

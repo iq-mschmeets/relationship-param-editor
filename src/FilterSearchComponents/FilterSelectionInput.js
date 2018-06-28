@@ -1,7 +1,8 @@
 import React from 'react';
 
-import EditButton from '../common/EditButton.js';
+
 import FilterSearchComponent from './FilterSearchComponent.js';
+import EditClearButton from '../common/EditClearButton.js';
 
 // Example of using modal.
 /*
@@ -30,7 +31,8 @@ const searchPanelDropDownLG = {
 const searchPanelDropDownMenu = {
     minWidth: '500px',
     marginTop: '-1px',
-    padding: '5px 5px'
+    padding: '5px 5px',
+    border: '1px solid #eaeaea'
 };
 
 /*
@@ -48,12 +50,13 @@ class FilterSelectionInput extends React.Component{
         this.state = Object.assign({},props,{ isModalOpen: false, 'labelText':'Filter' });
 
         this.handleChange = this.handleChange.bind( this );
-        this.onButtonClick = this.onButtonClick.bind( this );
+        this.onEditButtonClick = this.onEditButtonClick.bind( this );
+        this.onClearButtonClick = this.onClearButtonClick.bind( this );
         this.setFilterSelection = this.setFilterSelection.bind( this );
     }
 
     componentWillReceiveProps(nextProps){
-        this.setState( Object.assign(this.state, nextProps,{ isModalOpen: false }) );
+        this.setState( Object.assign(this.state, nextProps,{ isModalOpen: false,'searching':false }) );
     }
 
     handleChange(payload) {
@@ -67,8 +70,26 @@ console.log("FilterSearchInput.handleChange: %o, %s, %s",payload, param,val);
         }
     }
 
-    onButtonClick(event){
+    onEditButtonClick(event){
+        console.log('onEditButtonClick ', this.state);
         this.setState({'searching':!this.state.searching});
+    }
+
+    onClearButtonClick(event){
+console.log("FilterSelectionInput.onClearButtonClick: %o, %o",this.props, this.props.onChange);
+        this.setState({value: '','searching':false});
+        if( this.props.onReset ){
+            this.props.onReset();
+        } else if( this.props.onChange ){
+            this.props.onChange( {
+                'parameter': 'RELATIONSHIP_QUERY_ID',
+                'value': ''
+            });
+            this.props.onChange({
+                'parameter' : 'RELATIONSHIP_QUERY_LOOKUP',
+                'value' : ''
+            });
+        }
     }
 
     setFilterSelection(obj){
@@ -84,7 +105,11 @@ console.log("FilterSearchInput.handleChange: %o, %s, %s",payload, param,val);
     }
 
     render(){
-console.log("FilterSelectionInput: %o", this.state);
+        let searchComponent = null;
+        if( this.state.searching ){
+            searchComponent = <FilterSearchComponent onFilterSelection={this.handleChange}/>;
+        }
+//console.log("FilterSelectionInput: %o", this.state, searchComponent);
         return (
                 <div className="form-group row">
                   <label className="col-xs-2 control-label" htmlFor="relationship_query">{this.state.labelText}:</label>
@@ -97,27 +122,23 @@ console.log("FilterSelectionInput: %o", this.state);
 
                           <div className="input-group-btn">
                               <div className="dropdown dropdown-lg" style={searchPanelDropDownLG}>
-                                  <EditButton onClick={this.onButtonClick}/>
-                                  <div className="dropdown-menu dropdown-menu-right"
-                                        role="menu" style={searchPanelDropDownMenu}>
-                                      <div className="form-horizontal" onClick={this.stopIt}>
-                                        <FilterSearchComponent
-                                            onFilterSelection={this.handleChange}/>
-                                      </div>
-                                  </div>
+                                  <EditClearButton onEditClick={this.onEditButtonClick}
+                                                   onClearClick={this.props.onReset} />
                               </div>
                           </div>
                       </div>
+                      <div>
+                      {searchComponent}
+                      </div>
                       <em className="help-block">{this.state.help}</em>
                   </div>
-              </div>
+                </div>
           );
 
     }
 
-    stopIt(evt){
+    stopIt(evt) {
         evt.stopPropagation();
-
     }
 
     openModal() {
@@ -126,7 +147,7 @@ console.log("FilterSelectionInput: %o", this.state);
     }
 
     closeModal() {
-      this.setState({ isModalOpen: false })
+      this.setState({ isModalOpen: false });
     }
 }
 
