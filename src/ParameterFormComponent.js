@@ -6,6 +6,8 @@ import FilterSelectionInput from './FilterSearchComponents/FilterSelectionInput.
 import XformSelectionInput from './XformSearchComponents/XformSelectionInput.js';
 import SelectInputGroup from './common/SelectInputGroup.js';
 import OkCancelButtonGroup from './common/OkCancelButtonGroup.js';
+import {ParameterObject, defaultParameterSetFactory} from './ParameterObject.js';
+
 
 const CONTROLLER_OPTIONS = [
     {'text':'None', value:'None'},
@@ -15,14 +17,14 @@ const CONTROLLER_OPTIONS = [
 ];
 
 const DISPLAY_OPTIONS = [
-    {'text' : 'Normal', value: false},
-    {'text' : 'Always Expand', value: true}
+    {'text' : 'Not initially expanded', value: false},
+    {'text' : 'Always expanded', value: true}
 ];
 
 const RENDER_OPTIONS = [
     {'text' : 'Default', value: ''},
-    {'text' : 'XSLT', value: 'xslt'}
-    // {'text' : 'Stamp', value:'stamp'}
+    {'text' : 'XSLT', value: 'xslt'},
+    {'text' : 'Stamp', value:'stamp'}
 ];
 
 /**
@@ -35,16 +37,36 @@ class ParameterFormComponent extends React.Component{
     constructor( props ){
         super( props );
         this.state = {
-            model : props.model
+            model : this.initModel(props.model)
         };
         this.oncancel = this.oncancel.bind(this);
         this.onok = this.onok.bind(this);
         this.onChange = this.onChange.bind(this);
-        this.onResetFilterOptions = this.onResetFilterOptions.bind(this);
+        //this.onResetFilterOptions = this.onResetFilterOptions.bind(this);
+        console.log('ParameterFormComponent.CTOR: state: %o',this.state);
+    }
+    initModel( relationModel ){
+        console.log("ParameterFormComponent.initModel: %o",relationModel);
+        if( relationModel ){
+            const params = defaultParameterSetFactory(relationModel.relationID);
+            Object.keys(relationModel.displayParams).forEach((key)=>{
+                const param = params[key];
+                if( param ){
+                    param.defaultValue = relationModel.displayParams[key];
+                }
+            });
+            return {
+                relationID : relationModel.relationID,
+                name : relationModel.name,
+                parameters : params
+            };
+        }
+        return {};
     }
 
     componentWillReceiveProps( newProps ){
-        this.setState(Object.assign({},newProps));
+        console.log("ParameterFormComponent.componentWillRecieveProps: ",newProps);
+        this.setState( {'model': this.initModel(newProps.model)} );
     }
 
     onok(){
@@ -58,44 +80,56 @@ class ParameterFormComponent extends React.Component{
         return (typeof arg != 'undefined');
     }
 
+    /** @argument obj  ParameterObject */
     onChange(obj){
         // obj is { parameter: '', value:''}, in this case, it will be a parameter
         // name and value.
-        const newState = {}
+        const newState = Object.assign({}, this.state);
         if( obj.parameter == 'RELATIONSHIP_QUERY_ID' && (obj.value !== '' && !Number.isInteger(obj.value)) ){
             obj.parameter = 'RELATIONSHIP_QUERY_LOOKUP';
         }
-        newState[obj.parameter] = this.isValued(obj.value) ? obj.value : '';
-console.log("ParameterFormComp: %o, %o, %s", this.state, newState,Number.isInteger(obj.value));
-        this.setState( Object.assign(this.state.model.parameters, newState) );
-    }
+        newState.model.parameters[obj.parameter].value = obj.value;
 
+console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o, %s",
+            obj, newState, this.state, Number.isInteger(obj.value));
+
+        this.setState( newState );
+    }
+/*
     onResetFilterOptions(){
-        console.log("onResetFilterOptions ");
+        console.log("onResetFilterOptions ", this.state.model.parameters);
         const newState = {};
         newState['RELATIONSHIP_QUERY_ID'] = '';
-        newState['RELATIONSHIP_LOOKUP'] = '';
+        newState['RELATIONSHIP_QUERY_LOOKUP'] = '';
         newState['RELATIONSHIP_QUERY_XFORM'] = '';
         newState['RELATIONSHIP_QUERY_RENDERER'] = '';
-        this.setState( Object.assign(this.state.model.parameters, newState) );
-    }
 
+        var stateObj = Object.assign(this.state.model.parameters, newState);
+        console.log("onResetFilterOptions ", stateObj);
+        this.setState( stateObj );
+    }
+*/
     render(){
         //console.log("ParameterFormComponent.render: %o, %o",this.props.model, this.state.model);
         //TODO: Use RELATIONSHIP_QUERY_LOOKUP too.
+        console.log("ParameterFormComponent.render: %o",this.state);
         if( this.props.model ){
             let xslField = null;
             let renderField = null;
             // Don't show an XSLT selector if we're using the defualt query?
             // Is this correct, or should it always be an option?
             // No, only for optional queries, for now.
-            if( (this.state.model.parameters['RELATIONSHIP_QUERY_ID'] || this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP'])
-                && (this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'] == 'xslt') ){
-                xslField = <XformSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_XFORM']||''}
+            if( (this.state.model.parameters['RELATIONSHIP_QUERY_ID'].value || this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP'].value)
+                && (this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'].value == 'xslt') ){
+                xslField = <XformSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_XFORM'].value||''}
                                         label="XSLT Xform" parameter="RELATIONSHIP_QUERY_XFORM"
                                         onChange={this.onChange}
                                         help="This controls the (optional) XSLT used to produce the display from the query." />;
+            }else if( this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'].value == 'stamp' ){
+                //TODO: Need to build the Stamp Editor Panel...
+                xslField = <h3>Stamp editor here.</h3> 
             }
+
 
             return(
             <div>
@@ -106,36 +140,41 @@ console.log("ParameterFormComp: %o, %o, %s", this.state, newState,Number.isInteg
                                             label="RelationID" />
                     <ReadOnlyInputFormGroup value={this.state.model.name} help=""
                                             label="Name" />
-                    <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_LABEL']||''}
+                    <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_LABEL'].value||''}
                                             label="Label" parameter="RELATIONSHIP_LABEL"
                                             onChange={this.onChange}
                                             help="This label is used in the EDR display." />
-                    <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DESCRIPTION']||''}
+                    <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DESCRIPTION'].value||''}
                                             label="Description" parameter="RELATIONSHIP_DESCRIPTION"
                                             onChange={this.onChange}
                                             help="To provide the user with more information about the relationship." rows="5" />
-                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_EXPANDED']}
+                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_EXPANDED'].value}
                                      label="Expanded" parameter="RELATIONSHIP_DISPLAY_EXPANDED"
                                      onChange={this.onChange}
                                      help="This controls the initial display. Should this replationship expand automatically on page load?"
                                      options={DISPLAY_OPTIONS}
-                                     defaultValue="None"/>
-                    <FilterSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP']
-                                                 || this.state.model.parameters['RELATIONSHIP_QUERY_ID']
+                                     defaultValue="false"/>
+                    {
+                    // Here we insert the Render selector. Legacy default is going to wrap the current
+                    // functionality. Then we need to add component to take care of the parameters and
+                    // selectors needed for the new relationship display!
+                    }
+                    <FilterSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP'].value
+                                                 || this.state.model.parameters['RELATIONSHIP_QUERY_ID'].value
                                                  || 'Default'}
                                             label="Query" parameter="RELATIONSHIP_QUERY_ID"
                                             onChange={this.onChange}
                                             onReset={this.onResetFilterOptions}
                                             help="This controls the query used to produce the display." />
-                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER']}
+                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'].value}
                                      label="Renderer" parameter="RELATIONSHIP_QUERY_RENDERER"
                                      onChange={this.onChange}
                                      help="This determines how the query data is rendered."
                                      options={RENDER_OPTIONS}
-                                     defaultValue="Default"/>
+                                     defaultValue=""/>
                     {xslField}
 
-                    <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_SELECTOR']||''}
+                    <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_SELECTOR'].value||''}
                                              label="Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR"
                                              onChange={this.onChange}
                                              help="To place this relationship in a specific place in the page, enter an HTML selector." />

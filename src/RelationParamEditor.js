@@ -2,6 +2,7 @@ import React from 'react';
 import postal from 'postal';
 
 import RelatedClassProperties from './RelatedClassProperties.js';
+import ClassService from './ClassService.js';
 
 
 /*
@@ -22,6 +23,7 @@ export default class RelationParamEditor extends React.Component {
        this.onok = this.onok.bind(this);
        this.onUpdate = this.onUpdate.bind(this);
        this.reorder = this.reorder.bind(this);
+       this.load = this.load.bind(this);
 
         this.subscription = postal.subscribe({
            	channel: "class-meta-data",
@@ -47,6 +49,17 @@ console.log("postal-subscribe: %o, %o", data, envelope);
     reorder(id,from,to){console.log("RelationParamEditor.reorder: %o",arguments);}
     oncancel(){}
     onok(){}
+    load(){
+        ClassService( this.props.classID ).then( ( classObj ) => {
+            postal.publish({
+                channel: "class-meta-data",
+                topic: "select-class",
+                data: classObj.relationships
+              });
+        }).catch((rsp)=>{
+            alert(getMessageFromXHR(rsp));
+        });
+    }
 
 /*
     render() {
@@ -70,7 +83,11 @@ console.log("postal-subscribe: %o, %o", data, envelope);
         try{
             var data = this.state.model.models;
 console.log("RelationParamEditor.render: data: %o, state: %o", data, this.state);
-            return <RelatedClassProperties models={data} reorder={this.reorder}/>
+            return <RelatedClassProperties models={data}
+                                           reorder={this.reorder}
+                                           classID={this.props.classID}
+                                           refresh={this.load}
+                                           />
         }catch(er){
             console.error(er);
             return null;

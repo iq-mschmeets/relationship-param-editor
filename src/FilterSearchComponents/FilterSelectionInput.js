@@ -43,11 +43,14 @@ const searchPanelFormGroup={
 */
 
 
-class FilterSelectionInput extends React.Component{
-    constructor( props ){
+class FilterSelectionInput extends React.Component {
+    constructor( props ) {
         super( props );
 
-        this.state = Object.assign({},props,{ isModalOpen: false, 'labelText':'Filter' });
+        this.state = Object.assign( {}, props, {
+            isModalOpen: false,
+            'labelText': 'Filter'
+        } );
 
         this.handleChange = this.handleChange.bind( this );
         this.onEditButtonClick = this.onEditButtonClick.bind( this );
@@ -55,99 +58,155 @@ class FilterSelectionInput extends React.Component{
         this.setFilterSelection = this.setFilterSelection.bind( this );
     }
 
-    componentWillReceiveProps(nextProps){
-        this.setState( Object.assign(this.state, nextProps,{ isModalOpen: false,'searching':false }) );
+    componentWillReceiveProps( nextProps ) {
+        this.setState( Object.assign( this.state, nextProps, {
+            isModalOpen: false,
+            'searching': false
+        } ) );
     }
 
-    handleChange(payload) {
+    handleChange( payload ) {
         const val = payload.lookup ? payload.lookup : payload.id;
         const param = payload.lookup ? 'RELATIONSHIP_QUERY_LOOKUP' : 'RELATIONSHIP_QUERY_ID';
 
-console.log("FilterSearchInput.handleChange: %o, %s, %s",payload, param,val);
-        this.setState({value: val});
-        if( this.props.onChange ){
-            this.props.onChange( { 'parameter': param, 'value': val });
+        console.log( "FilterSearchInput.handleChange: %o, %s, %s", payload, param, val );
+        this.setState( {
+            value: val
+        } );
+        if( this.props.onChange ) {
+            this.props.onChange( {
+                'parameter': param,
+                'value': val
+            } );
         }
     }
 
-    onEditButtonClick(event){
-        console.log('onEditButtonClick ', this.state);
-        this.setState({'searching':!this.state.searching});
+    onEditButtonClick( event ) {
+        console.log( 'onEditButtonClick ', this.state );
+        this.setState( {
+            'searching': !this.state.searching
+        } );
     }
 
-    onClearButtonClick(event){
-console.log("FilterSelectionInput.onClearButtonClick: %o, %o",this.props, this.props.onChange);
-        this.setState({value: '','searching':false});
-        if( this.props.onReset ){
+    onClearButtonClick( event ) {
+        console.log( "FilterSelectionInput.onClearButtonClick: %o, %o", this.props, this.props.onChange );
+        this.setState( {
+            value: 'Default',
+            'searching': false
+        } );
+        if( this.props.onReset ) {
             this.props.onReset();
-        } else if( this.props.onChange ){
+        } else if( this.props.onChange ) {
             this.props.onChange( {
                 'parameter': 'RELATIONSHIP_QUERY_ID',
                 'value': ''
-            });
-            this.props.onChange({
-                'parameter' : 'RELATIONSHIP_QUERY_LOOKUP',
-                'value' : ''
-            });
+            } );
+            this.props.onChange( {
+                'parameter': 'RELATIONSHIP_QUERY_LOOKUP',
+                'value': ''
+            } );
         }
     }
 
-    setFilterSelection(obj){
-        if( obj.lookup ){
-            this.setState({'searching':!this.state.searching, 'value':obj.lookup});
+    setFilterSelection( obj ) {
+        if( obj.lookup ) {
+            this.setState( {
+                'searching': !this.state.searching,
+                'value': obj.lookup
+            } );
         } else {
-            this.setState({'searching':!this.state.searching, 'value':obj.id});
+            this.setState( {
+                'searching': !this.state.searching,
+                'value': obj.id
+            } );
         }
-        this.setState({'searching':!this.state.searching, 'value':obj.id});
-        if( this.props.valueChange ){
-            this.props.valueChange( {'value' : this.state.value} );
+
+        if( this.props.valueChange ) {
+            this.props.valueChange( {
+                'value': this.state.value
+            } );
         }
     }
 
-    render(){
+    render() {
         let searchComponent = null;
-        if( this.state.searching ){
-            searchComponent = <FilterSearchComponent onFilterSelection={this.handleChange}/>;
+        if( this.state.searching ) {
+            searchComponent = < FilterSearchComponent onFilterSelection = {
+                this.handleChange
+            }
+            />;
         }
-//console.log("FilterSelectionInput: %o", this.state, searchComponent);
-        return (
-                <div className="form-group row">
-                  <label className="col-xs-2 control-label" htmlFor="relationship_query">{this.state.labelText}:</label>
-                  <div className="col-xs-10">
-                      <div className="input-group" style={advSearchStyle}>
-                          <input type="text" className="form-control"
-                                 placeholder="Search for filters" id="relationship_query"
-                                 value={this.state.value}
-                                 onChange={this.handleChange}/>
+        //console.log("FilterSelectionInput: %o", this.state, searchComponent);
+        return ( < div className = "form-group row" >
+            <
+            label className = "col-xs-2 control-label"
+            htmlFor = "relationship_query" > {
+                this.state.labelText
+            }: < /label> <
+            div className = "col-xs-10" >
+            <
+            div className = "input-group"
+            style = {
+                advSearchStyle
+            } >
+            <
+            input type = "text"
+            className = "form-control"
+            placeholder = "Search for filters"
+            id = "relationship_query"
+            value = {
+                this.state.value
+            }
+            onChange = {
+                this.handleChange
+            }
+            />
 
-                          <div className="input-group-btn">
-                              <div className="dropdown dropdown-lg" style={searchPanelDropDownLG}>
-                                  <EditClearButton onEditClick={this.onEditButtonClick}
-                                                   onClearClick={this.props.onReset} />
-                              </div>
-                          </div>
-                      </div>
-                      <div>
-                      {searchComponent}
-                      </div>
-                      <em className="help-block">{this.state.help}</em>
-                  </div>
-                </div>
-          );
+            <
+            div className = "input-group-btn" >
+            <
+            div className = "dropdown dropdown-lg"
+            style = {
+                searchPanelDropDownLG
+            } >
+            <
+            EditClearButton onEditClick = {
+                this.onEditButtonClick
+            }
+            onClearClick = {
+                this.props.onReset
+            }
+            /> <
+            /div> <
+            /div> <
+            /div> <
+            div > {
+                searchComponent
+            } < /div> <
+            em className = "help-block" > {
+                this.state.help
+            } < /em> <
+            /div> <
+            /div>
+        );
 
     }
 
-    stopIt(evt) {
+    stopIt( evt ) {
         evt.stopPropagation();
     }
 
     openModal() {
-      this.setState({ isModalOpen: true });
-      //<button className="btn btn-default" onClick={() => this.openModal()}>Select Filter</button>
+        this.setState( {
+            isModalOpen: true
+        } );
+        //<button className="btn btn-default" onClick={() => this.openModal()}>Select Filter</button>
     }
 
     closeModal() {
-      this.setState({ isModalOpen: false });
+        this.setState( {
+            isModalOpen: false
+        } );
     }
 }
 

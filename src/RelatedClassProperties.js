@@ -2,8 +2,9 @@ import React from 'react';
 import RelatedClassList from './RelatedClassList.js';
 import ParameterFormComponent from './ParameterFormComponent.js';
 import ParameterService from './ParameterService';
+import getMessageFromXHR from './common/XHRError';
+import RELATIONSHIP_PARAMETER_TYPE from './ParameterObject';
 
-export const RELATIONSHIP_PARAMETER_TYPE = 157;
 export const MESSAGE_DURATION = 1250;
 
 class RelatedClassProperties extends React.Component {
@@ -52,6 +53,13 @@ console.log("RelatedClasProperties: get selected model: %s, %o", val, rval);
         console.log( "RelatedClasProperties.onSave args: %o, %o", obj, this.state.selected );
 
         const params = [];
+        Object.keys( obj ).forEach( ( key )=>{
+            let p = obj[key];
+            if( p.changed ){
+                params.push( p.toJSON() );
+            }
+        });
+        /*
         Object.keys( obj ).forEach( ( key ) => {
             params.push( {
                 'id': this.state.selected,
@@ -60,6 +68,7 @@ console.log("RelatedClasProperties: get selected model: %s, %o", val, rval);
                 'typeID': RELATIONSHIP_PARAMETER_TYPE
             } )
         } );
+        */
 console.log( "RelatedClasProperties.onSave params: %o", params );
         this.setState( {
             'saving': true
@@ -69,7 +78,11 @@ console.log( "RelatedClasProperties.onSave params: %o", params );
                 'saving': false
             } ), MESSAGE_DURATION );
 console.log( "RelatedClassProperties.PS-SAVE: %o", rsp )
-        } );
+        }).then((rsp)=>{
+            this.props.refresh();
+        }).catch((rsp)=>{
+            alert(getMessageFromXHR(rsp));
+        });
     }
 
     render() {

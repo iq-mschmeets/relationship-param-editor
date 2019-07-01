@@ -22,7 +22,7 @@ class SelectInputGroup extends React.Component{
     handleChange(event) {
         this.setState({value: event.target.value});
         if( this.props.onChange ){
-            this.props.onChange( { 'parameter': this.props.parameter, 'value': (event.target.value || event.value) });
+            this.props.onChange( { 'parameter': this.props.parameter, 'value': event.target.value });
         }
     }
 
@@ -46,7 +46,7 @@ class SelectInputGroup extends React.Component{
                     value={this.state.value || this.props.defaultValue}
                     onChange={this.handleChange}> {
                 this.props.options.map(function(option, idx){
-                    return <option key={idx} value={option.value || option.text} >{option.text}</option>
+                    return <option key={idx} value={option.value} >{option.text}</option>
                 })
             }
             </select>
