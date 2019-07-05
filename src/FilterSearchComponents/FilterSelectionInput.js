@@ -136,58 +136,28 @@ class FilterSelectionInput extends React.Component {
             }
             />;
         }
-        //console.log("FilterSelectionInput: %o", this.state, searchComponent);
-        return ( < div className = "form-group row" >
-            <
-            label className = "col-xs-2 control-label"
-            htmlFor = "relationship_query" > {
-                this.state.labelText
-            }: < /label> <
-            div className = "col-xs-10" >
-            <
-            div className = "input-group"
-            style = {
-                advSearchStyle
-            } >
-            <
-            input type = "text"
-            className = "form-control"
-            placeholder = "Search for filters"
-            id = "relationship_query"
-            value = {
-                this.state.value
-            }
-            onChange = {
-                this.handleChange
-            }
-            />
+        return ( 
+            <div className = "form-group" >
+                <label className=" control-label" htmlFor={this.props.parameter}> 
+                    {this.state.labelText}: 
+                </label> 
+                <div className="">
+                    <div className="input-group" style={advSearchStyle}> 
+                        <input type="text" className="form-control" name={this.props.parameter}
+                               placeholder="Search for filters" id="relationship_query"
+                               value={this.state.value} onChange={this.handleChange} />
 
-            <
-            div className = "input-group-btn" >
-            <
-            div className = "dropdown dropdown-lg"
-            style = {
-                searchPanelDropDownLG
-            } >
-            <
-            EditClearButton onEditClick = {
-                this.onEditButtonClick
-            }
-            onClearClick = {
-                this.props.onReset
-            }
-            /> <
-            /div> <
-            /div> <
-            /div> <
-            div > {
-                searchComponent
-            } < /div> <
-            em className = "help-block" > {
-                this.state.help
-            } < /em> <
-            /div> <
-            /div>
+                        <div className = "input-group-btn" >
+                            <div className="dropdown dropdown-lg" style={searchPanelDropDownLG}>
+                                 <EditClearButton onEditClick={this.onEditButtonClick }
+                                                  onClearClick={this.props.onClearButtonClick }/> 
+                            </div> 
+                        </div> 
+                    </div> 
+                    <div> { searchComponent } </div> 
+                    <em className="help-block" > { this.state.help } </em> 
+                 </div> 
+            </div>
         );
 
     }
@@ -200,7 +170,6 @@ class FilterSelectionInput extends React.Component {
         this.setState( {
             isModalOpen: true
         } );
-        //<button className="btn btn-default" onClick={() => this.openModal()}>Select Filter</button>
     }
 
     closeModal() {

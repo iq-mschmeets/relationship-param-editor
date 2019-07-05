@@ -5,6 +5,7 @@ import ReadWriteInputFormGroup from './common/ReadWriteInputFormGroup.js';
 import FilterSelectionInput from './FilterSearchComponents/FilterSelectionInput.js';
 import XformSelectionInput from './XformSearchComponents/XformSelectionInput.js';
 import SelectInputGroup from './common/SelectInputGroup.js';
+import StampPropertyEditor from './StampPropertyEditor.js';
 import OkCancelButtonGroup from './common/OkCancelButtonGroup.js';
 import {ParameterObject, defaultParameterSetFactory} from './ParameterObject.js';
 
@@ -23,9 +24,20 @@ const DISPLAY_OPTIONS = [
 
 const RENDER_OPTIONS = [
     {'text' : 'Default', value: ''},
-    {'text' : 'XSLT', value: 'xslt'},
-    {'text' : 'Stamp', value:'stamp'}
+    {'text' : 'XSLT (legacy only)', value: 'xslt'},
+    {'text' : 'Stamp', value:'stamp'},
+    {'text' : 'Matrix', value:'matrix'}
 ];
+
+const READ_WRITE_PARAMS = {
+    'RELATIONSHIP_HELP_RESOURCE':{ label:'Help resource', help:'User markup name lookup for user help, or explanation (optional)'},
+    'RELATIONSHIP_LINK_BUTTON_LABEL':{ label:"Label for 'Link' button", help:'Customize the label of the "Link" button (optional)'},
+    'RELATIONSHIP_UNLINK_BUTTON_LABEL':{ label:'Label for the \'Un-Link\' button', help:'Customize the lable of the \'Un-Link\' button (optional)'},
+    'RELATIONSHIP_SOURCE_FILTERS':{ label:'Source Filter List', help:"You may add multiple filters for the user's selection (optional). Enter as a JSON array."},
+    'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'}
+ 
+
+};
 
 /**
  A form component to display and update Relationship parameters
@@ -95,20 +107,6 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
 
         this.setState( newState );
     }
-/*
-    onResetFilterOptions(){
-        console.log("onResetFilterOptions ", this.state.model.parameters);
-        const newState = {};
-        newState['RELATIONSHIP_QUERY_ID'] = '';
-        newState['RELATIONSHIP_QUERY_LOOKUP'] = '';
-        newState['RELATIONSHIP_QUERY_XFORM'] = '';
-        newState['RELATIONSHIP_QUERY_RENDERER'] = '';
-
-        var stateObj = Object.assign(this.state.model.parameters, newState);
-        console.log("onResetFilterOptions ", stateObj);
-        this.setState( stateObj );
-    }
-*/
     render(){
         //console.log("ParameterFormComponent.render: %o, %o",this.props.model, this.state.model);
         //TODO: Use RELATIONSHIP_QUERY_LOOKUP too.
@@ -121,16 +119,21 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
             // No, only for optional queries, for now.
             if( (this.state.model.parameters['RELATIONSHIP_QUERY_ID'].value || this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP'].value)
                 && (this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'].value == 'xslt') ){
+
                 xslField = <XformSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_XFORM'].value||''}
                                         label="XSLT Xform" parameter="RELATIONSHIP_QUERY_XFORM"
                                         onChange={this.onChange}
                                         help="This controls the (optional) XSLT used to produce the display from the query." />;
+
             }else if( this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'].value == 'stamp' ){
+
                 //TODO: Need to build the Stamp Editor Panel...
-                xslField = <h3>Stamp editor here.</h3> 
+                xslField = <StampPropertyEditor params={this.state.model.parameters} onChange={this.onChange} /> 
+
             }
 
 
+            console.log('Stamper... xslField ', xslField);
             return(
             <div>
                 <h4 className="section-head">Properties</h4>
@@ -178,6 +181,23 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
                                              label="Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR"
                                              onChange={this.onChange}
                                              help="To place this relationship in a specific place in the page, enter an HTML selector." />
+                    
+                    {Object.keys(READ_WRITE_PARAMS).map( ( key )=>{
+                        const p = this.state.model.parameters[key];
+                        const local = READ_WRITE_PARAMS[ key ];
+
+
+                        return React.createElement(ReadWriteInputFormGroup, { 
+                                value     : p.value||'',
+                                label     : local.label, 
+                                parameter :  p.parameter, 
+                                onChange  :  this.onChange, 
+                                help      : local.help,
+                                rows      : "1"
+                        });
+
+                    
+                    })}
 
                     <OkCancelButtonGroup onsubmit={this.oncancel} onok={this.onok} saving={this.props.saving}/>
                 </form>

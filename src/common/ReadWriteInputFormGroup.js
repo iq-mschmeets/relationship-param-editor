@@ -26,13 +26,14 @@ class ReadWriteInputFormGroup extends React.Component{
 
     render(){
         //console.log("ReadWriteInputFormGroup.render: state %o", this.state);
-        return (<div className="form-group row">
-                <label className="col-xs-2 control-label" htmlFor="relationship_name">{this.state.label}:</label>
-                <div className="col-xs-10">
+        return (<div className="form-group">
+                <label className=" control-label" htmlFor={this.state.parameter}>{this.state.label}:</label>
+                <div className="">
                     <textarea placeholder=""
                            className="form-control input-md"
                            value={this.state.value}
                            onChange={this.handleChange}
+                           name={this.state.parameter}
                            rows={ this.props.rows || 1 }/>
                     <em className="help-block">{this.state.help}</em>
                 </div>

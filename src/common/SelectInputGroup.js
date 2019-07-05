@@ -37,13 +37,13 @@ class SelectInputGroup extends React.Component{
     }
 
     render(){
-//console.log("SelectInputGroup.render: %o", this.props);
       return(
-          <div className="form-group row">
-            <label className="col-xs-2 control-label" htmlFor="relationship_name">{this.props.label}:</label>
-            <div className="col-xs-10">
+          <div className="form-group">
+            <label className="control-label" htmlFor={this.props.parameter}>{this.props.label}:</label>
+            <div className="">
             <select className="form-control"
                     value={this.state.value || this.props.defaultValue}
+                    name={this.props.parameter}
                     onChange={this.handleChange}> {
                 this.props.options.map(function(option, idx){
                     return <option key={idx} value={option.value} >{option.text}</option>
