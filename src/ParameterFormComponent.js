@@ -29,12 +29,17 @@ const RENDER_OPTIONS = [
     {'text' : 'Matrix', value:'matrix'}
 ];
 
+const EDIT_LINK_OPTIONS = [
+    {'text' : 'False', value:'false' },
+    {'text' : 'True', value:'true' }
+];
+
 const READ_WRITE_PARAMS = {
     'RELATIONSHIP_HELP_RESOURCE':{ label:'Help resource', help:'User markup name lookup for user help, or explanation (optional)'},
     'RELATIONSHIP_LINK_BUTTON_LABEL':{ label:"Label for 'Link' button", help:'Customize the label of the "Link" button (optional)'},
     'RELATIONSHIP_UNLINK_BUTTON_LABEL':{ label:'Label for the \'Un-Link\' button', help:'Customize the lable of the \'Un-Link\' button (optional)'},
     'RELATIONSHIP_SOURCE_FILTERS':{ label:'Source Filter List', help:"You may add multiple filters for the user's selection (optional). Enter as a JSON array."},
-    'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'}
+    'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'},
  
 
 };
@@ -57,6 +62,7 @@ class ParameterFormComponent extends React.Component{
         //this.onResetFilterOptions = this.onResetFilterOptions.bind(this);
         console.log('ParameterFormComponent.CTOR: state: %o',this.state);
     }
+
     initModel( relationModel ){
         console.log("ParameterFormComponent.initModel: %o",relationModel);
         if( relationModel ){
@@ -133,7 +139,6 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
             }
 
 
-            console.log('Stamper... xslField ', xslField);
             return(
             <div>
                 <h4 className="section-head">Properties</h4>
@@ -176,11 +181,15 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
                                      options={RENDER_OPTIONS}
                                      defaultValue=""/>
                     {xslField}
+                    
+                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_EDIT_LINK_ON_CREATE'].value}
 
-                    <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_SELECTOR'].value||''}
-                                             label="Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR"
-                                             onChange={this.onChange}
-                                             help="To place this relationship in a specific place in the page, enter an HTML selector." />
+                                     label="Require edit on create" parameter="RELATIONSHIP_EDIT_LINK_ON_CREATE"
+                                     onChange={this.onChange}
+                                     help="Require the user to fill out the form when they create links. No automatic link creation."
+                                     options={EDIT_LINK_OPTIONS}
+                                     defaultValue="false"/>
+                                         
                     
                     {Object.keys(READ_WRITE_PARAMS).map( ( key )=>{
                         const p = this.state.model.parameters[key];

@@ -1,6 +1,7 @@
+const SEARCH_URL = '../request/namedTextLocator';
 
-function getSpecification( term ){
-    return `?term=${term}&type=22`;
+function getSpecification( term ) {
+    return `?term=${term}`;
     /*
     return JSON.stringify({
         id : 0,
@@ -15,66 +16,47 @@ function getSpecification( term ){
 }
 
 /**
-    NOTE: This function currently returns dummy test data if the XHR request
-    fails. For Development use only.
-
+    Given a search term, this function returns a JSON array of objects
+    that identify the filters matching the search term.
 */
-function FilterSearchService( term ){
-
-    var respText =  JSON.stringify({"components":[
-        {"id":67,"label":"All Filters that query Users","typeId":20},
-        {"id":97,"label":"Most Active Users","typeId":20},
-        {"id":1204,"label":"Pending Users (All)","typeId":20},
-        {"id":88,"label":"Pending users that need attention","typeId":20},
-        {"id":1233,"label":"Users in EE_USER Role, but not as default role","typeId":20},
-        {"id":1234,"label":"Users in History with no User Record","typeId":20},
-        {"id":175,"label":"Users not in EE_USER Role","typeId":20},
-        {"id":1235,"label":"Users with Privs but no User Record","typeId":20},
-        {"id":174,"label":"Users with mismatched Oracle IDs","typeId":20},
-        {"id":1236,"label":"Users with no Named Text Privileges ","typeId":20},
-        {"id":1270,"label":"Current Users Person (Parameterized) (Parameterized)","typeId":22}
-        ]
-    });
+function FilterSearchService( term ) {
 
     //var data = new FormData();
     //data.append( "requestSpecification", getSpecification( term ) );
     //var data = "requestSpecification="+getSpecification(term);
 
-    return new Promise(function(resolve, reject){
+    return new Promise( function( resolve, reject ) {
         // Do the usual XHR stuff
-         var req = new XMLHttpRequest();
-         req.open('GET', '../request/namedTextLocator'+getSpecification(term));
-         req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-         req.setRequestHeader('Accept' , "application/json");
+        var req = new XMLHttpRequest();
+        req.open( 'GET', SEARCH_URL + getSpecification( term ) );
+        req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
+        req.setRequestHeader( 'Accept', "application/json" );
 
-         req.onload = function() {
-           // This is called even on 404 etc
-           // so check the status
-           if (req.status === 200) {
-               console.log("onload.200");
-             // Resolve the promise with the response text
-             resolve(JSON.parse(req.response));
-           }
-           else {
-               console.log("onload.other");
-             // Otherwise reject with the status text
-             // which will hopefully be a meaningful error
-            //  reject(Error(req.statusText));
-                resolve(JSON.parse(respText));
-           }
-         };
+        req.onload = function() {
+            // This is called even on 404 etc
+            // so check the status
+            if( req.status === 200 ) {
+                // Resolve the promise with the response text
+                resolve( JSON.parse( req.response ) );
+            } else {
+                console.log( "Error in FilterSearchService response: %s, %o", req.status, req.response );
+                // Otherwise reject with the status text
+                // which will hopefully be a meaningful error
+                reject( Error( req.statusText ) );
+            }
+        };
 
-         // Handle network errors
-         req.onerror = function() {
-           //reject(Error("Network Error"));
-           console.log("ONERROR: %o", arguments);
-           resolve(JSON.parse(respText));
-         };
+        // Handle network errors
+        req.onerror = function() {
+            //reject(Error("Network Error"));
+            console.log( "ONERROR: %o", arguments );
+            reject( Error( req.statusText ) );
+        };
 
-         // Make the request
-         req.send( );
+        // Make the request
+        req.send();
 
-    });
+    } );
 
     /*
     var headers = new Headers();
