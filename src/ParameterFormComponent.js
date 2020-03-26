@@ -14,6 +14,7 @@ const CONTROLLER_OPTIONS = [
     {'text':'None', value:'None'},
     {'text':'One To Many', value:'One To Many'},
     {'text':'Many To Many', value:'Many To Many'},
+    {'text':'One To One', value:'One To One'},
     {'text':'', value:''}
 ];
 
@@ -24,9 +25,9 @@ const DISPLAY_OPTIONS = [
 
 const RENDER_OPTIONS = [
     {'text' : 'Default', value: ''},
-    {'text' : 'XSLT (legacy only)', value: 'xslt'},
     {'text' : 'Stamp', value:'stamp'},
-    {'text' : 'Matrix', value:'matrix'}
+    {'text' : 'Matrix', value:'MATRIX'},
+    {'text' : 'XSLT (legacy only)', value: 'xslt'}
 ];
 
 const EDIT_LINK_OPTIONS = [
@@ -40,7 +41,7 @@ const READ_WRITE_PARAMS = {
     'RELATIONSHIP_UNLINK_BUTTON_LABEL':{ label:'Label for the \'Un-Link\' button', help:'Customize the lable of the \'Un-Link\' button (optional)'},
     'RELATIONSHIP_SOURCE_FILTERS':{ label:'Source Filter List', help:"You may add multiple filters for the user's selection (optional). Enter as a JSON array."},
     'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'},
- 
+
 
 };
 
@@ -131,10 +132,10 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
                                         onChange={this.onChange}
                                         help="This controls the (optional) XSLT used to produce the display from the query." />;
 
-            }else if( this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'].value == 'stamp' ){
+            } else if( this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'].value == 'stamp' ){
 
                 //TODO: Need to build the Stamp Editor Panel...
-                xslField = <StampPropertyEditor params={this.state.model.parameters} onChange={this.onChange} /> 
+                xslField = <StampPropertyEditor params={this.state.model.parameters} onChange={this.onChange} />
 
             }
 
@@ -181,7 +182,7 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
                                      options={RENDER_OPTIONS}
                                      defaultValue=""/>
                     {xslField}
-                    
+
                     <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_EDIT_LINK_ON_CREATE'].value}
 
                                      label="Require edit on create" parameter="RELATIONSHIP_EDIT_LINK_ON_CREATE"
@@ -189,23 +190,23 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
                                      help="Require the user to fill out the form when they create links. No automatic link creation."
                                      options={EDIT_LINK_OPTIONS}
                                      defaultValue="false"/>
-                                         
-                    
+
+
                     {Object.keys(READ_WRITE_PARAMS).map( ( key )=>{
                         const p = this.state.model.parameters[key];
                         const local = READ_WRITE_PARAMS[ key ];
 
 
-                        return React.createElement(ReadWriteInputFormGroup, { 
+                        return React.createElement(ReadWriteInputFormGroup, {
                                 value     : p.value||'',
-                                label     : local.label, 
-                                parameter :  p.parameter, 
-                                onChange  :  this.onChange, 
+                                label     : local.label,
+                                parameter :  p.parameter,
+                                onChange  :  this.onChange,
                                 help      : local.help,
                                 rows      : "1"
                         });
 
-                    
+
                     })}
 
                     <OkCancelButtonGroup onsubmit={this.oncancel} onok={this.onok} saving={this.props.saving}/>
