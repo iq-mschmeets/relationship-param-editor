@@ -41,7 +41,7 @@ class FilterSearchResultItem extends React.Component{
                 data-id={this.props.item.id}
                 data-label={this.props.item.label}
                 style={itemStyle}>
-                <span className="itemLabel" style={{width:'45%',display:'inline-block'}}>
+                <span className="itemLabel" style={{flexBasis:'45%',display:'inline-block'}}>
                     {this.props.item.label}
                 </span>
                 <span className={this.getClassForID()}

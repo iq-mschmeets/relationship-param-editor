@@ -31,6 +31,22 @@ function getDefaultValue( key ){
     return rval;
 }
 
+export function getNullParameter( relationID, parameter ){
+    return {
+        changed : true,
+        init: function(){},
+        toJSON : function(){
+            return {
+                id        : relationID,
+                parameter : parameter,
+                value     : '',
+                typeID   : RELATIONSHIP_PARAMETER_TYPE,
+                changed   : true
+            };
+        }
+    };
+}
+
 
 export function defaultParameterSetFactory( relationID ) {
     const params = {};
