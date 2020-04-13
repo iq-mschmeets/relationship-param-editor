@@ -7,7 +7,8 @@ import XformSelectionInput from './XformSearchComponents/XformSelectionInput.js'
 import SelectInputGroup from './common/SelectInputGroup.js';
 import StampPropertyEditor from './StampPropertyEditor.js';
 import OkCancelButtonGroup from './common/OkCancelButtonGroup.js';
-import {ParameterObject, defaultParameterSetFactory} from './ParameterObject.js';
+import {ParameterObject, defaultParameterSetFactory, getNullParameter} from './ParameterObject.js';
+
 
 
 const CONTROLLER_OPTIONS = [
@@ -104,9 +105,18 @@ class ParameterFormComponent extends React.Component{
         // obj is { parameter: '', value:''}, in this case, it will be a parameter
         // name and value.
         const newState = Object.assign({}, this.state);
+        // Prefer the query lookup. If the id value is not an integer, switch the parameter type.
+        // If we set one parameter for query, then "unset" the other one. The server will delete
+        // an unvalueed parameter.
         if( obj.parameter == 'RELATIONSHIP_QUERY_ID' && (obj.value !== '' && !Number.isInteger(obj.value)) ){
             obj.parameter = 'RELATIONSHIP_QUERY_LOOKUP';
+            newState.model.parameters['RELATIONSHIP_QUERY_ID'] = getNullParameter(this.state.relationID, 'RELATIONSHIP_QUERY_ID');
         }
+
+        if( obj.parameter = 'RELATIONSHIP_QUERY_ID' ){
+            newState.model.parameters['RELATIONSHIP_QUERY_ID'] = getNullParameter(this.state.relationID, 'RELATIONSHIP_QUERY_LOOKUP');
+        }
+
         newState.model.parameters[obj.parameter].value = obj.value;
 
 console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o, %s",

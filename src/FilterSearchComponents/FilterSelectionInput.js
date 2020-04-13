@@ -112,18 +112,21 @@ class FilterSelectionInput extends React.Component {
         if( obj.lookup ) {
             this.setState( {
                 'searching': !this.state.searching,
-                'value': obj.lookup
+                'value': obj.lookup,
+                'type' : 'RELATIONSHIP_QUERY_LOOKUP'
             } );
         } else {
             this.setState( {
                 'searching': !this.state.searching,
-                'value': obj.id
+                'value': obj.id,
+                'type' : 'RELATIONSHIP_QUERY_ID'
             } );
         }
 
         if( this.props.valueChange ) {
             this.props.valueChange( {
-                'value': this.state.value
+                'value': this.state.value,
+                'type' : obj.lookup ? 'RELATIONSHIP_QUERY_LOOKUP' : 'RELATIONSHIP_QUERY_ID'
             } );
         }
     }
@@ -136,13 +139,13 @@ class FilterSelectionInput extends React.Component {
             }
             />;
         }
-        return ( 
+        return (
             <div className = "form-group" >
-                <label className=" control-label" htmlFor={this.props.parameter}> 
-                    {this.state.labelText}: 
-                </label> 
+                <label className=" control-label" htmlFor={this.props.parameter}>
+                    {this.state.labelText}:
+                </label>
                 <div className="">
-                    <div className="input-group" style={advSearchStyle}> 
+                    <div className="input-group" style={advSearchStyle}>
                         <input type="text" className="form-control" name={this.props.parameter}
                                placeholder="Search for filters" id="relationship_query"
                                value={this.state.value} onChange={this.handleChange} />
@@ -150,13 +153,13 @@ class FilterSelectionInput extends React.Component {
                         <div className = "input-group-btn" >
                             <div className="dropdown dropdown-lg" style={searchPanelDropDownLG}>
                                  <EditClearButton onEditClick={this.onEditButtonClick }
-                                                  onClearClick={this.props.onClearButtonClick }/> 
-                            </div> 
-                        </div> 
-                    </div> 
-                    <div> { searchComponent } </div> 
-                    <em className="help-block" > { this.state.help } </em> 
-                 </div> 
+                                                  onClearClick={this.props.onClearButtonClick }/>
+                            </div>
+                        </div>
+                    </div>
+                    <div> { searchComponent } </div>
+                    <em className="help-block" > { this.state.help } </em>
+                 </div>
             </div>
         );
 
