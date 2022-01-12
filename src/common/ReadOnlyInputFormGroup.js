@@ -12,7 +12,7 @@ class ReadOnlyInputFormGroup extends React.Component{
         return this.props.value.length > 0 ? this.props.value.toString().replace('&gt;', '>') :'';
     }
     render(){
-        console.log("ROIFG: value = %s",this.props.value);
+        console.log("ReadOnlyInputFormGroup: value = %s",this.props.value);
 
         return (<div className="form-group row">
                 <label className="col-xs-2 control-label" htmlFor="relationship_name">{this.props.label}:</label>

@@ -20,6 +20,8 @@ class SelectInputGroup extends React.Component{
     }
 
     handleChange(event) {
+        event.preventDefault();
+console.log("SelectInputGroup.handleChange");        
         this.setState({value: event.target.value});
         if( this.props.onChange ){
             this.props.onChange( { 'parameter': this.props.parameter, 'value': event.target.value });

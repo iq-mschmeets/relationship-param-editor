@@ -9,6 +9,8 @@ class ReadWriteInputFormGroup extends React.Component{
     }
 
     handleChange(event) {
+        console.log("ReadWriteInputFormGroup.handleChange: %o, %o",this.props, event);
+        event.preventDefault();
         this.setState({value: event.target.value});
 
         if( this.props.onChange ){

@@ -4,7 +4,7 @@ import ReadWriteInputFormGroup from './common/ReadWriteInputFormGroup.js';
 import SelectInputGroup from './common/SelectInputGroup.js';
 
 const STAMP_PARAMETERS = {
-    
+
     'RELATIONSHIP_SOURCE_STAMP':{ label:'Source Stamp', help:'The name of the function to use for creating source tiles -- not linked (optional)'},
     'RELATIONSHIP_TARGET_STAMP':{ label:'Target Stamp', help:'The name of the funciton to use for creating target tiles -- already linked (optional)'},
     //'RELATIONSHIP_TARGET_LABEL':{},
@@ -28,6 +28,7 @@ class StampPropertyEditor extends React.Component{
     }
 
     onChange( evt ){
+        
         console.log("StampPropertyEditor.onChange: %o", evt);
         this.props.onChange( evt );
     }
@@ -41,7 +42,7 @@ class StampPropertyEditor extends React.Component{
     render(){
         const stampSpecificParams = this.getStampSpecificParameterKeys();
 
-        var rval =  React.createElement('fieldset', null, 
+        var rval =  React.createElement('fieldset', null,
             stampSpecificParams.map( ( key )=>{
                 const p = this.props.params[key];
                 const local = STAMP_PARAMETERS[ p.parameter ];
@@ -55,20 +56,20 @@ class StampPropertyEditor extends React.Component{
                         help : local.help,
                         options : LAYOUT_RENDER_OPTIONS,
                         defaultValue : 'side-by-side'
-                    }); 
+                    });
                 } else {
 
-                    return React.createElement(ReadWriteInputFormGroup, { 
+                    return React.createElement(ReadWriteInputFormGroup, {
                             value :p.value||'',
-                            label : local.label, 
-                            parameter :  p.parameter, 
-                            onChange :  this.onChange, 
+                            label : local.label,
+                            parameter :  p.parameter,
+                            onChange :  this.onChange,
                             help : local.help,
                             rows:"1"
                     });
                 }
 
-            
+
             })
         );
         return rval;
@@ -76,4 +77,3 @@ class StampPropertyEditor extends React.Component{
 }
 
 export default StampPropertyEditor;
-

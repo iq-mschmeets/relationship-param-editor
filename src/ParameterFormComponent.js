@@ -41,7 +41,7 @@ const READ_WRITE_PARAMS = {
     'RELATIONSHIP_LINK_BUTTON_LABEL':{ label:"Label for 'Link' button", help:'Customize the label of the "Link" button (optional)'},
     'RELATIONSHIP_UNLINK_BUTTON_LABEL':{ label:'Label for the \'Un-Link\' button', help:'Customize the lable of the \'Un-Link\' button (optional)'},
     'RELATIONSHIP_SOURCE_FILTERS':{ label:'Source Filter List', help:"You may add multiple filters for the user's selection (optional). Enter as a JSON array."},
-    'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'},
+    // 'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'},
 
 
 };
@@ -108,12 +108,14 @@ class ParameterFormComponent extends React.Component{
         // Prefer the query lookup. If the id value is not an integer, switch the parameter type.
         // If we set one parameter for query, then "unset" the other one. The server will delete
         // an unvalueed parameter.
+console.log("ParameterFormComponent.onChange: %s, obj: %o, newState: %o",obj.parameter, obj, newState);
+
         if( obj.parameter == 'RELATIONSHIP_QUERY_ID' && (obj.value !== '' && !Number.isInteger(obj.value)) ){
             obj.parameter = 'RELATIONSHIP_QUERY_LOOKUP';
             newState.model.parameters['RELATIONSHIP_QUERY_ID'] = getNullParameter(this.state.relationID, 'RELATIONSHIP_QUERY_ID');
         }
 
-        if( obj.parameter = 'RELATIONSHIP_QUERY_ID' ){
+        if( obj.parameter == 'RELATIONSHIP_QUERY_ID' ){
             newState.model.parameters['RELATIONSHIP_QUERY_ID'] = getNullParameter(this.state.relationID, 'RELATIONSHIP_QUERY_LOOKUP');
         }
 
@@ -167,17 +169,27 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
                                             label="Description" parameter="RELATIONSHIP_DESCRIPTION"
                                             onChange={this.onChange}
                                             help="To provide the user with more information about the relationship." rows="5" />
+                    <fieldset>
+                    <legend>Expansion</legend>
                     <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_EXPANDED'].value}
                                      label="Expanded" parameter="RELATIONSHIP_DISPLAY_EXPANDED"
                                      onChange={this.onChange}
                                      help="This controls the initial display. Should this replationship expand automatically on page load?"
                                      options={DISPLAY_OPTIONS}
                                      defaultValue="false"/>
+
+                     <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_SELECTOR'].value||''}
+                                             label="HTML Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR"
+                                             onChange={this.onChange}
+                                             help="To place this relationship in a specific place in the page, enter an HTML/CSS selector.." rows="1" />
+                    </fieldset>
                     {
                     // Here we insert the Render selector. Legacy default is going to wrap the current
                     // functionality. Then we need to add component to take care of the parameters and
                     // selectors needed for the new relationship display!
                     }
+                    <fieldset>
+                    <legend>Filter Selection and Rendering</legend>
                     <FilterSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP'].value
                                                  || this.state.model.parameters['RELATIONSHIP_QUERY_ID'].value
                                                  || 'Default'}
@@ -192,7 +204,10 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
                                      options={RENDER_OPTIONS}
                                      defaultValue=""/>
                     {xslField}
+                    </fieldset>
 
+                    <fieldset>
+                    <legend>Advanced</legend>
                     <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_EDIT_LINK_ON_CREATE'].value}
 
                                      label="Require edit on create" parameter="RELATIONSHIP_EDIT_LINK_ON_CREATE"
@@ -218,6 +233,7 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
 
 
                     })}
+                    </fieldset>
 
                     <OkCancelButtonGroup onsubmit={this.oncancel} onok={this.onok} saving={this.props.saving}/>
                 </form>
