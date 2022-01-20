@@ -52,10 +52,18 @@ class FilterSelectionInput extends React.Component {
             'labelText': 'Filter'
         } );
 
-        this.handleChange = this.handleChange.bind( this );
-        this.onEditButtonClick = this.onEditButtonClick.bind( this );
+
         this.onClearButtonClick = this.onClearButtonClick.bind( this );
         this.setFilterSelection = this.setFilterSelection.bind( this );
+        this.onAction = this.onAction.bind( this );
+    }
+
+    componentDidMount() {
+        this.filterSelector.addEventListener( "action", this.onAction );
+    }
+
+    componentWillUnmount() {
+        this.filterSelector.removeEventListener( "action", this.onAction );
     }
 
     componentWillReceiveProps( nextProps ) {
@@ -65,31 +73,49 @@ class FilterSelectionInput extends React.Component {
         } ) );
     }
 
-    handleChange( payload ) {
-        const val = payload.lookup ? payload.lookup : payload.id;
-        const param = payload.lookup ? 'RELATIONSHIP_QUERY_LOOKUP' : 'RELATIONSHIP_QUERY_ID';
+    onAction( evt ) {
+        if ( evt.detail.type === "named_text_selection" ) {
+            console.log( "FilterSelectionInput.onAction %o", evt.detail );
 
-        console.log( "FilterSearchInput.handleChange: %o, %s, %s", payload, param, val );
-        this.setState( {
-            value: val
-        } );
-        if( this.props.onChange ) {
-            this.props.onChange( {
-                'parameter': param,
-                'value': val
-            } );
+            if ( evt.detail.lookup == null && evt.detail.id == null ) {
+                //unset
+                this.onClearButtonClick( {} );
+                return;
+            }
+            if ( evt.detail.lookup && evt.detail.lookup.length > 1 ) {
+                this.setState( {
+                    searching: false,
+                    value: evt.detail.lookup,
+                    type : 'RELATIONSHIP_QUERY_LOOKUP'
+                })
+                if( this.props.onChange ) {
+                    this.props.onChange( {
+                        'value': evt.detail.lookup,
+                        'type': 'RELATIONSHIP_QUERY_LOOKUP',
+                        'parameter' : 'RELATIONSHIP_QUERY_LOOKUP'
+                    } );
+                }
+
+            } else {
+                this.setState( {
+                    searching: false,
+                    value: evt.detail.id,
+                    type : 'RELATIONSHIP_QUERY_ID'
+                })
+                if( this.props.onChange ) {
+                    this.props.onChange( {
+                        'value': evt.detail.id,
+                        'type': 'RELATIONSHIP_QUERY_ID',
+                        'parameter' : 'RELATIONSHIP_QUERY_ID'
+                    } );
+                }
+
+            }
+
         }
     }
 
-    onEditButtonClick( event ) {
-        console.log( 'onEditButtonClick ', this.state );
-        this.setState( {
-            'searching': !this.state.searching
-        } );
-    }
-
     onClearButtonClick( event ) {
-        console.log( "FilterSelectionInput.onClearButtonClick: %o, %o", this.props, this.props.onChange );
         this.setState( {
             value: 'Default',
             'searching': false
@@ -132,34 +158,19 @@ class FilterSelectionInput extends React.Component {
     }
 
     render() {
-        let searchComponent = null;
-        if( this.state.searching ) {
-            searchComponent = < FilterSearchComponent onFilterSelection = {
-                this.handleChange
-            }
-            />;
-        }
+
         return (
             <div className = "form-group" >
                 <label className=" control-label" htmlFor={this.props.parameter}>
                     {this.state.labelText}:
                 </label>
-                <div className="">
-                    <div className="input-group" style={advSearchStyle}>
-                        <input type="text" className="form-control" name={this.props.parameter}
-                               placeholder="Search for filters" id="relationship_query"
-                               value={this.state.value} onChange={this.handleChange} />
+                <div>
+                    <iq-named-text-selector data-type="filter"
+                            data-initial-value={this.state.value}
+                            ref={( filterSelector ) => { this.filterSelector = filterSelector; }} />
 
-                        <div className = "input-group-btn" >
-                            <div className="dropdown dropdown-lg" style={searchPanelDropDownLG}>
-                                 <EditClearButton onEditClick={this.onEditButtonClick }
-                                                  onClearClick={this.props.onClearButtonClick }/>
-                            </div>
-                        </div>
-                    </div>
-                    <div> { searchComponent } </div>
                     <em className="help-block" > { this.state.help } </em>
-                 </div>
+                </div>
             </div>
         );
 

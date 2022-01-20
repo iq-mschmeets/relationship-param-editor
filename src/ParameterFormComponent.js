@@ -119,6 +119,7 @@ console.log("ParameterFormComponent.onChange: %s, obj: %o, newState: %o",obj.par
             newState.model.parameters['RELATIONSHIP_QUERY_ID'] = getNullParameter(this.state.relationID, 'RELATIONSHIP_QUERY_LOOKUP');
         }
 
+
         newState.model.parameters[obj.parameter].value = obj.value;
 
 console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o, %s",

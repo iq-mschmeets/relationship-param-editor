@@ -21,14 +21,14 @@ class FilterSearchComponent extends React.Component{
     }
 
     invokeSearch(obj){
-    console.log("FilterSelectionInput.invokeSearch: %o",obj);
+
         let searchTerm = obj.value;
         // How it should work.
         //.then( (response)=>{return response.json()} )
         var prms = FilterSearchService( searchTerm );
         prms.then((data)=>{
             let comp = data;
-            console.log("data:%o",comp);
+            console.log("FilterSearchComponent return data: %o",comp);
             this.setState({'searchItems' : comp})
         });
 
