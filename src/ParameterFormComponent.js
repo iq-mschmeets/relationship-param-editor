@@ -170,46 +170,45 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
                                             label="Description" parameter="RELATIONSHIP_DESCRIPTION"
                                             onChange={this.onChange}
                                             help="To provide the user with more information about the relationship." rows="5" />
-                    <fieldset>
-                    <legend>Expansion</legend>
-                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_EXPANDED'].value}
-                                     label="Expanded" parameter="RELATIONSHIP_DISPLAY_EXPANDED"
-                                     onChange={this.onChange}
-                                     help="This controls the initial display. Should this replationship expand automatically on page load?"
-                                     options={DISPLAY_OPTIONS}
-                                     defaultValue="false"/>
+                    <tab-view>
+                        <tab-list role="tablist">
+                            <tab-button class="mr1 sub active" role="tab" name="Expansion" aria-selected="true" tabindex="0">Expansion</tab-button>
+                            <tab-button class="mr1 sub" role="tab" name="Data" aria-selected="false" tabindex="-1">Data</tab-button>
+                            <tab-button class="mr1 sub" role="tab" name="Advanced" aria-selected="false" tabindex="-1">Advanced</tab-button>
+                        </tab-list>
 
-                     <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_SELECTOR'].value||''}
-                                             label="HTML Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR"
-                                             onChange={this.onChange}
-                                             help="To place this relationship in a specific place in the page, enter an HTML/CSS selector.." rows="1" />
-                    </fieldset>
-                    {
-                    // Here we insert the Render selector. Legacy default is going to wrap the current
-                    // functionality. Then we need to add component to take care of the parameters and
-                    // selectors needed for the new relationship display!
-                    }
-                    <fieldset>
-                    <legend>Filter Selection and Rendering</legend>
-                    <FilterSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP'].value
-                                                 || this.state.model.parameters['RELATIONSHIP_QUERY_ID'].value
-                                                 || 'Default'}
-                                            label="Query" parameter="RELATIONSHIP_QUERY_ID"
-                                            onChange={this.onChange}
-                                            onReset={this.onResetFilterOptions}
-                                            help="This controls the query used to produce the display." />
-                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'].value}
-                                     label="Renderer" parameter="RELATIONSHIP_QUERY_RENDERER"
-                                     onChange={this.onChange}
-                                     help="This determines how the query data is rendered."
-                                     options={RENDER_OPTIONS}
-                                     defaultValue=""/>
-                    {xslField}
-                    </fieldset>
+                    <tab-panel name="Expansion" class="active" aria-label="Expansion" role="tabpanel">
+                        <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_EXPANDED'].value}
+                                         label="Expanded" parameter="RELATIONSHIP_DISPLAY_EXPANDED"
+                                         onChange={this.onChange}
+                                         help="This controls the initial display. Should this replationship expand automatically on page load?"
+                                         options={DISPLAY_OPTIONS}
+                                         defaultValue="false"/>
 
-                    <fieldset>
-                    <legend>Advanced</legend>
-                    <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_EDIT_LINK_ON_CREATE'].value}
+                         <ReadWriteInputFormGroup value={this.state.model.parameters['RELATIONSHIP_DISPLAY_SELECTOR'].value||''}
+                                                 label="HTML Selector" parameter="RELATIONSHIP_DISPLAY_SELECTOR"
+                                                 onChange={this.onChange}
+                                                 help="To place this relationship in a specific place in the page, enter an HTML/CSS selector.." rows="1" />
+                    </tab-panel>
+                    <tab-panel name="Data" class="" aria-label="Data" role="tabpanel">
+                        <FilterSelectionInput value={this.state.model.parameters['RELATIONSHIP_QUERY_LOOKUP'].value
+                                                     || this.state.model.parameters['RELATIONSHIP_QUERY_ID'].value
+                                                     || 'Default'}
+                                                label="Query" parameter="RELATIONSHIP_QUERY_ID"
+                                                onChange={this.onChange}
+                                                onReset={this.onResetFilterOptions}
+                                                help="This controls the query used to produce the display." />
+                        <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_QUERY_RENDERER'].value}
+                                         label="Renderer" parameter="RELATIONSHIP_QUERY_RENDERER"
+                                         onChange={this.onChange}
+                                         help="This determines how the query data is rendered."
+                                         options={RENDER_OPTIONS}
+                                         defaultValue=""/>
+                        {xslField}
+                    </tab-panel>
+
+                    <tab-panel name="Advanced" class="" aria-label="Advanced" role="tabpanel">
+                        <SelectInputGroup value={this.state.model.parameters['RELATIONSHIP_EDIT_LINK_ON_CREATE'].value}
 
                                      label="Require edit on create" parameter="RELATIONSHIP_EDIT_LINK_ON_CREATE"
                                      onChange={this.onChange}
@@ -218,24 +217,24 @@ console.log("ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o,
                                      defaultValue="false"/>
 
 
-                    {Object.keys(READ_WRITE_PARAMS).map( ( key )=>{
-                        const p = this.state.model.parameters[key];
-                        const local = READ_WRITE_PARAMS[ key ];
+                        {Object.keys(READ_WRITE_PARAMS).map( ( key )=>{
+                            const p = this.state.model.parameters[key];
+                            const local = READ_WRITE_PARAMS[ key ];
 
 
-                        return React.createElement(ReadWriteInputFormGroup, {
-                                value     : p.value||'',
-                                label     : local.label,
-                                parameter :  p.parameter,
-                                onChange  :  this.onChange,
-                                help      : local.help,
-                                rows      : "1"
-                        });
+                            return React.createElement(ReadWriteInputFormGroup, {
+                                    value     : p.value||'',
+                                    label     : local.label,
+                                    parameter :  p.parameter,
+                                    onChange  :  this.onChange,
+                                    help      : local.help,
+                                    rows      : "1"
+                            });
 
 
-                    })}
-                    </fieldset>
-
+                        })}
+                    </tab-panel>
+                    </tab-view>
                     <OkCancelButtonGroup onsubmit={this.oncancel} onok={this.onok} saving={this.props.saving}/>
                 </form>
 
