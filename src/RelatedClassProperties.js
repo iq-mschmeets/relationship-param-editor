@@ -52,10 +52,10 @@ console.log("RelatedClasProperties: get selected model: %s, %o", val, rval);
     onSave( obj ) {
         console.log( "RelatedClasProperties.onSave args: %o, %o", obj, this.state.selected );
 
-        const params = [];
+        let params = [];
         Object.keys( obj ).forEach( ( key )=>{
             let p = obj[key];
-            if( p.changed ){
+            if( p.changed && (p.id !== undefined || p.id !== null) ){
                 params.push( p.toJSON() );
             }
         });
@@ -69,6 +69,7 @@ console.log("RelatedClasProperties: get selected model: %s, %o", val, rval);
             } )
         } );
         */
+        params = params.filter( (p)=>p.id !== undefined );
 console.log( "RelatedClasProperties.onSave params: %o", params );
         this.setState( {
             'saving': true
