@@ -26,6 +26,7 @@ class SelectInputGroup extends React.Component {
             this.props.onChange({
                 parameter: this.props.parameter,
                 value: event.target.value,
+                data:this.props
             });
         }
     }

@@ -59,7 +59,7 @@ const READ_WRITE_PARAMS = {
     },
     RELATIONSHIP_TARGET: {
         label: "Target",
-        help: "The target class for this relationship (optional)",
+        help: "The target class attrubte for this relationship (optional)",
     },
     // 'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'},
 };
@@ -67,11 +67,11 @@ const READ_WRITE_PARAMS = {
 function oneHopRelationRelations(relMeta) {
     console.log("ENTERING: oneHopRelationRelations %o", relMeta);
     if (isNotNull(relMeta) && isNotNull(relMeta.oneHopRelation)) {
-        return relMeta.oneHopRelation.reduce(function (acc, oneHop, indx) {
+        return relMeta.oneHopRelation.reduce(function(acc, oneHop, indx) {
             if (
                 oneHop.fkClassID == relMeta.fkClassID &&
                 //     oneHop.relationID != relMeta.relationID &&
-                oneHop.pkClassID != relMeta.pkClassID /*&&
+                // oneHop.pkClassID != relMeta.pkClassID /*&&
             //     oneHop.fkClassID != oneHop.pkClassID*/
             ) {
                 acc.push(oneHop);
@@ -99,7 +99,14 @@ function getRelationshipTarget(relationModel, parameter) {
     const oneHops = oneHopRelationRelations(relationModel);
 
     let opts = oneHops.map((oh) => {
-        return { id: oh.pkClassID, text: oh.pkClassName, value: oh.pkClassID };
+        return {
+            id: oh.pkClassID,
+            text: `${oh.pkClassName}.${relationModel.fkAttributeName}`,
+            value: oh.pkClassID,
+            attributeName: relationModel.fkAttributeName,
+            attributeId: relationModel.fkAttrId,
+            fkColumn: relationModel.fkColumn
+        };
     });
     return opts;
 }
@@ -206,6 +213,14 @@ class ParameterFormComponent extends React.Component {
                     this.state.relationID,
                     "RELATIONSHIP_QUERY_LOOKUP"
                 );
+        }
+
+        if(obj.parameter == "RELATIONSHIP_TARGET_CLASS"){
+            //TODO: need the whole object to also get they
+            //TARGET_ATTRIBUTE_COLUMN because now we're
+            //going to save that too.
+            newState.model.parameters["RELATIONSHIP_TARGET_CLASS"] = obj.value;
+            newState.model.parameters["RELATIONSHIP_TARGET_ATTRIBUTE_COLUMN"] = obj.data.fkColumn;
         }
 
         newState.model.parameters[obj.parameter].value = obj.value;
@@ -434,8 +449,8 @@ class ParameterFormComponent extends React.Component {
                                             "RELATIONSHIP_TARGET_CLASS"
                                         ]
                                             ? this.state.model.parameters[
-                                                  "RELATIONSHIP_TARGET_CLASS"
-                                              ].value
+                                                "RELATIONSHIP_TARGET_CLASS"
+                                            ].value
                                             : null
                                     }
                                     label="Select the target Class for this relationship"
@@ -494,7 +509,7 @@ class ParameterFormComponent extends React.Component {
         evt.preventDefault();
         evt.stopPropagation();
     }
-    oncancel() {}
+    oncancel() { }
 }
 
 export default ParameterFormComponent;
