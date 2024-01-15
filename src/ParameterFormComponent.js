@@ -64,13 +64,12 @@ const READ_WRITE_PARAMS = {
     // 'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'},
 };
 
-function oneHopRelationRelations(relMeta) {
-    console.log("ENTERING: oneHopRelationRelations %o", relMeta);
+function oneHopRelations(relMeta) {
+    console.log("ENTERING: oneHopRelations %o", relMeta);
     if (isNotNull(relMeta) && isNotNull(relMeta.oneHopRelation)) {
         return relMeta.oneHopRelation.reduce(function(acc, oneHop, indx) {
             if (
                 oneHop.fkClassID == relMeta.fkClassID //&&
-                //     oneHop.relationID != relMeta.relationID &&
                 // oneHop.pkClassID != relMeta.pkClassID /*&&
                 //     oneHop.fkClassID != oneHop.pkClassID*/
             ) {
@@ -97,7 +96,7 @@ function oneHopRelationRelations(relMeta) {
 
 function getRelationshipTarget(relationModel, parameter) {
     console.log("getRelationshipTarget %o", relationModel.oneHopRelation);
-    const oneHops = oneHopRelationRelations(relationModel);
+    const oneHops = oneHopRelations(relationModel);
 
     let opts = oneHops.map((oh) => {
         return {
@@ -106,7 +105,9 @@ function getRelationshipTarget(relationModel, parameter) {
             value: oh.pkClassID,
             attributeName: oh.fkAttributeName,
             attributeId: oh.fkAttrId,
-            fkColumn: oh.fkColumn
+            fkColumn: oh.fkColumn,
+            text: oh.fqPkClassName,
+            value: oh.fqPkClassName,
         };
     });
     return opts;
@@ -156,6 +157,7 @@ class ParameterFormComponent extends React.Component {
                 fkClassID: relationModel.fkClassID,
                 pkClassID: relationModel.pkClassID,
                 pkClassName: relationModel.pkClassName,
+                fqPkClassName: relationModel.fqPkClassName,
             };
         }
         return {};
@@ -459,7 +461,11 @@ class ParameterFormComponent extends React.Component {
                                     onChange={this.onChange}
                                     help="If the link class has multiple Relation attributes, this lets you select one for the Choose function"
                                     // options={EDIT_LINK_OPTIONS}
-                                    options={relatedTargets}
+                                    options={
+                                        relatedTargets.length > 1
+                                            ? relatedTargets
+                                            : []
+                                    }
                                     defaultValue=""
                                 />
 
