@@ -69,23 +69,24 @@ function oneHopRelationRelations(relMeta) {
     if (isNotNull(relMeta) && isNotNull(relMeta.oneHopRelation)) {
         return relMeta.oneHopRelation.reduce(function(acc, oneHop, indx) {
             if (
-                oneHop.fkClassID == relMeta.fkClassID &&
+                oneHop.fkClassID == relMeta.fkClassID //&&
                 //     oneHop.relationID != relMeta.relationID &&
                 // oneHop.pkClassID != relMeta.pkClassID /*&&
-            //     oneHop.fkClassID != oneHop.pkClassID*/
+                //     oneHop.fkClassID != oneHop.pkClassID*/
             ) {
                 acc.push(oneHop);
             }
             if (relMeta.oneHopRelation.length > 2) {
-                console.log(
-                    "oFK: %s, rFK: %s, oPK: %s, rPK: %s, oRI: %s, rRI: %s",
-                    oneHop.fkClassID,
-                    relMeta.fkClassID,
-                    oneHop.pkClassID,
-                    relMeta.pkClassID,
-                    oneHop.relationID,
-                    relMeta.relationID
-                );
+                // console.log(
+                //     "oFK: %s, rFK: %s, oPK: %s, rPK: %s, oRI: %s, rRI: %s",
+                //     oneHop.fkClassID,
+                //    relMeta.fkClassID,
+                //     oneHop.pkClassID,
+                //     relMeta.pkClassID,
+                //     oneHop.relationID,
+                //     relMeta.relationID
+                // );
+                console.log("oneHopRelationRelations acc: %o",acc);
             }
 
             return acc;
@@ -101,11 +102,11 @@ function getRelationshipTarget(relationModel, parameter) {
     let opts = oneHops.map((oh) => {
         return {
             id: oh.pkClassID,
-            text: `${oh.pkClassName}.${relationModel.fkAttributeName}`,
+            text: `${oh.pkClassName}.${oh.fkAttributeName}`,
             value: oh.pkClassID,
-            attributeName: relationModel.fkAttributeName,
-            attributeId: relationModel.fkAttrId,
-            fkColumn: relationModel.fkColumn
+            attributeName: oh.fkAttributeName,
+            attributeId: oh.fkAttrId,
+            fkColumn: oh.fkColumn
         };
     });
     return opts;
