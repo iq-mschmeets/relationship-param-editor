@@ -94,22 +94,26 @@ function oneHopRelations(relMeta) {
     return [];
 }
 
+function classAttrText(fqClassName,attrName) {
+    return `${fqClassName}:${attrName}`;
+}
+
 function getRelationshipTarget(relationModel, parameter) {
-    console.log("getRelationshipTarget %o", relationModel.oneHopRelation);
+    
     const oneHops = oneHopRelations(relationModel);
 
     let opts = oneHops.map((oh) => {
         return {
             id: oh.pkClassID,
-            text: `${oh.pkClassName}.${oh.fkAttributeName}`,
-            value: oh.pkClassID,
+            text: classAttrText(oh.fqPkClassName, oh.fkAttributeName),
+            value: oh.fqPkClassName, //oh.pkClassID,
             attributeName: oh.fkAttributeName,
             attributeId: oh.fkAttrId,
             fkColumn: oh.fkColumn,
-            text: oh.fqPkClassName,
-            value: oh.fqPkClassName,
+            fqPkClassName : oh.fqPkClassName
         };
     });
+    console.log("getRelationshipTarget rm: %o, opts: %o", relationModel.oneHopRelation,opts);
     return opts;
 }
 
@@ -222,8 +226,12 @@ class ParameterFormComponent extends React.Component {
             //TODO: need the whole object to also get they
             //TARGET_ATTRIBUTE_COLUMN because now we're
             //going to save that too.
-            newState.model.parameters["RELATIONSHIP_TARGET_CLASS"] = obj.value;
-            newState.model.parameters["RELATIONSHIP_TARGET_ATTRIBUTE_COLUMN"] = obj.data.fkColumn;
+            console.log("onChange: obj: %o, options: %o",obj,obj.data.options);
+            const selectedValue = parseInt(obj.value);
+            newState.model.parameters["RELATIONSHIP_TARGET_CLASS"].value = obj.data.options.fqPkClassName;
+            let selectedRel = obj.data.options.filter((r,index) => r.id === selectedValue );
+            console.log("onChange %s, filter to rel: %o",selectedValue,selectedRel);
+            newState.model.parameters["RELATIONSHIP_TARGET_ATTRIBUTE_COLUMN"].value = selectedRel[0].fkColumn;
         }
 
         newState.model.parameters[obj.parameter].value = obj.value;
@@ -282,7 +290,7 @@ class ParameterFormComponent extends React.Component {
             }
             const relatedTargets = getRelationshipTarget(this.state.model);
             console.log(
-                "ParameterFormComponent.render relatedList %o",
+                "ParameterFormComponent.render relatedTargets %o",
                 relatedTargets
             );
 

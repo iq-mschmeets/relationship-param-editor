@@ -44,6 +44,7 @@ class SelectInputGroup extends React.Component {
     }
 
     render() {
+        console.log("SelectInputGroup.render props: %o",this.props);
         let nVal = () => {
             return [<option value=""></option>].concat(
                 this.props.options.map((opt, idx) => (

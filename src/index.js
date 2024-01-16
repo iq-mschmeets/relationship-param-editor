@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import postal from 'postal';
-import registerServiceWorker from './registerServiceWorker';
+//import registerServiceWorker from './registerServiceWorker';
 import RelationParamEditor from './RelationParamEditor';
 import EditButton from './common/EditButton';
 import './index.css';
@@ -24,4 +24,4 @@ const models = [
     }
 ];
 
-registerServiceWorker();
+//registerServiceWorker();
