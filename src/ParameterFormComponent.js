@@ -226,10 +226,14 @@ class ParameterFormComponent extends React.Component {
             //TODO: need the whole object to also get they
             //TARGET_ATTRIBUTE_COLUMN because now we're
             //going to save that too.
-            console.log("onChange: obj: %o, options: %o",obj,obj.data.options);
-            const selectedValue = parseInt(obj.value);
-            newState.model.parameters["RELATIONSHIP_TARGET_CLASS"].value = obj.data.options.fqPkClassName;
-            let selectedRel = obj.data.options.filter((r,index) => r.id === selectedValue );
+            //const selectedValue = parseInt(obj.value);
+            const selectedValue = obj.value;
+            let selectedRel = obj.data.options.filter((r,index) => r.fqPkClassName === selectedValue);
+
+            console.log("onChange: sValue: %s, obj: %o, options: %o",obj.value,obj,obj.data.options);
+            
+            newState.model.parameters["RELATIONSHIP_TARGET_CLASS"].value = selectedValue; //obj.data.options.fqPkClassName;
+            
             console.log("onChange %s, filter to rel: %o",selectedValue,selectedRel);
             newState.model.parameters["RELATIONSHIP_TARGET_ATTRIBUTE_COLUMN"].value = selectedRel[0].fkColumn;
         }
@@ -418,6 +422,7 @@ class ParameterFormComponent extends React.Component {
                                     onReset={this.onResetFilterOptions}
                                     help="This controls the query used to produce the display."
                                 />
+                                <!--
                                 <SelectInputGroup
                                     value={
                                         this.state.model.parameters[
@@ -431,7 +436,9 @@ class ParameterFormComponent extends React.Component {
                                     options={RENDER_OPTIONS}
                                     defaultValue=""
                                 />
+                                -->
                                 {xslField}
+                                
                             </tab-panel>
 
                             <tab-panel
