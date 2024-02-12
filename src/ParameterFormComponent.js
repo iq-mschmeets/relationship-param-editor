@@ -67,7 +67,7 @@ const READ_WRITE_PARAMS = {
 function oneHopRelations(relMeta) {
     console.log("ENTERING: oneHopRelations %o", relMeta);
     if (isNotNull(relMeta) && isNotNull(relMeta.oneHopRelation)) {
-        return relMeta.oneHopRelation.reduce(function(acc, oneHop, indx) {
+        return relMeta.oneHopRelation.reduce(function (acc, oneHop, indx) {
             if (
                 oneHop.fkClassID == relMeta.fkClassID //&&
                 // oneHop.pkClassID != relMeta.pkClassID /*&&
@@ -85,7 +85,7 @@ function oneHopRelations(relMeta) {
                 //     oneHop.relationID,
                 //     relMeta.relationID
                 // );
-                console.log("oneHopRelationRelations acc: %o",acc);
+                console.log("oneHopRelationRelations acc: %o", acc);
             }
 
             return acc;
@@ -94,12 +94,12 @@ function oneHopRelations(relMeta) {
     return [];
 }
 
-function classAttrText(fqClassName,attrName) {
+function classAttrText(fqClassName, attrName) {
     return `${fqClassName}:${attrName}`;
 }
 
 function getRelationshipTarget(relationModel, parameter) {
-    
+
     const oneHops = oneHopRelations(relationModel);
 
     let opts = oneHops.map((oh) => {
@@ -110,10 +110,10 @@ function getRelationshipTarget(relationModel, parameter) {
             attributeName: oh.fkAttributeName,
             attributeId: oh.fkAttrId,
             fkColumn: oh.fkColumn,
-            fqPkClassName : oh.fqPkClassName
+            fqPkClassName: oh.fqPkClassName
         };
     });
-    console.log("getRelationshipTarget rm: %o, opts: %o", relationModel.oneHopRelation,opts);
+    console.log("getRelationshipTarget rm: %o, opts: %o", relationModel.oneHopRelation, opts);
     return opts;
 }
 
@@ -150,6 +150,7 @@ class ParameterFormComponent extends React.Component {
                 }
                 if (key === "RELATIONSHIP_TARGET_CLASS") {
                     // value & options for Parameter.
+                    console.log("initModel: RELATIONSHIP_TARGET_CLASS model: %o, param: %o", relationModel, param==null?"param null":param);
                     param.options = getRelationshipTarget(relationModel, param);
                 }
             });
@@ -213,28 +214,29 @@ class ParameterFormComponent extends React.Component {
                     "RELATIONSHIP_QUERY_ID"
                 );
         }
-
-        if (obj.parameter == "RELATIONSHIP_QUERY_ID") {
+         if (obj.parameter == "RELATIONSHIP_QUERY_ID") {
             newState.model.parameters["RELATIONSHIP_QUERY_ID"] =
                 getNullParameter(
                     this.state.relationID,
                     "RELATIONSHIP_QUERY_LOOKUP"
                 );
-        }
-
-        if(obj.parameter == "RELATIONSHIP_TARGET_CLASS"){
+        } 
+        if (obj.parameter == "RELATIONSHIP_TARGET_CLASS") {
             //TODO: need the whole object to also get they
             //TARGET_ATTRIBUTE_COLUMN because now we're
             //going to save that too.
-            console.log("onChange: obj: %o, options: %o",obj,obj.data.options);
-            const selectedValue = parseInt(obj.value);
-            newState.model.parameters["RELATIONSHIP_TARGET_CLASS"].value = obj.data.options.fqPkClassName;
-            let selectedRel = obj.data.options.filter((r,index) => r.id === selectedValue );
-            console.log("onChange %s, filter to rel: %o",selectedValue,selectedRel);
-            newState.model.parameters["RELATIONSHIP_TARGET_ATTRIBUTE_COLUMN"].value = selectedRel[0].fkColumn;
-        }
+            const selectedOption = obj.data.options.filter((opt)=>{opt.fqPkClassName == obj.value});
+            console.log("onChange: obj: %o, options: %o, selected: %o", obj, obj.data.options, selectedOption);
 
+            newState.model.parameters["RELATIONSHIP_TARGET_CLASS"].value = selectedOption.fqPkClassName;
+            //let selectedRel = obj.data.options.filter((r, index) => r.id === selectedValue);
+            console.log("onChange %s, filter to selectedOption: %o, cls: %s, attr: %s", 
+                obj.value, selectedOption, selectedOption.fqPkClassName, selectedOption.fkColumn
+            );
+            newState.model.parameters["RELATIONSHIP_TARGET_ATTRIBUTE_COLUMN"].value = selectedOption.fkColumn;
+        }
         newState.model.parameters[obj.parameter].value = obj.value;
+        
 
         console.log(
             "ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o, %s",
