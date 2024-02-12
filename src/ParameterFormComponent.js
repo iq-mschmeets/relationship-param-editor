@@ -225,8 +225,10 @@ class ParameterFormComponent extends React.Component {
             //TODO: need the whole object to also get they
             //TARGET_ATTRIBUTE_COLUMN because now we're
             //going to save that too.
+
             const selectedOption = obj.data.options.filter((opt)=>{opt.fqPkClassName == obj.value});
             console.log("onChange: obj: %o, options: %o, selected: %o", obj, obj.data.options, selectedOption);
+
 
             newState.model.parameters["RELATIONSHIP_TARGET_CLASS"].value = selectedOption.fqPkClassName;
             //let selectedRel = obj.data.options.filter((r, index) => r.id === selectedValue);
@@ -420,6 +422,7 @@ class ParameterFormComponent extends React.Component {
                                     onReset={this.onResetFilterOptions}
                                     help="This controls the query used to produce the display."
                                 />
+                                <!--
                                 <SelectInputGroup
                                     value={
                                         this.state.model.parameters[
@@ -433,7 +436,9 @@ class ParameterFormComponent extends React.Component {
                                     options={RENDER_OPTIONS}
                                     defaultValue=""
                                 />
+                                -->
                                 {xslField}
+                                
                             </tab-panel>
 
                             <tab-panel
