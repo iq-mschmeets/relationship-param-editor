@@ -422,21 +422,7 @@ class ParameterFormComponent extends React.Component {
                                     onReset={this.onResetFilterOptions}
                                     help="This controls the query used to produce the display."
                                 />
-                                <!--
-                                <SelectInputGroup
-                                    value={
-                                        this.state.model.parameters[
-                                            "RELATIONSHIP_QUERY_RENDERER"
-                                        ].value
-                                    }
-                                    label="Renderer"
-                                    parameter="RELATIONSHIP_QUERY_RENDERER"
-                                    onChange={this.onChange}
-                                    help="This determines how the query data is rendered."
-                                    options={RENDER_OPTIONS}
-                                    defaultValue=""
-                                />
-                                -->
+                                
                                 {xslField}
                                 
                             </tab-panel>
