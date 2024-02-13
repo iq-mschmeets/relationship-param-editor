@@ -15,6 +15,13 @@ import {
     isNotNull,
 } from "./ParameterObject.js";
 
+const getFirst = (arr, defaultValue)=>{
+    if(Array.isArray(arr) && arr.length > 0){
+        return arr[0];
+    }
+    return defaultValue;
+}
+
 const CONTROLLER_OPTIONS = [
     { text: "None", value: "None" },
     { text: "One To Many", value: "One To Many" },
@@ -40,7 +47,8 @@ const EDIT_LINK_OPTIONS = [
     { text: "True", value: "true" },
 ];
 
-const READ_WRITE_PARAMS = {
+const READ_WRITE_PARAMS = {};
+/*
     RELATIONSHIP_HELP_RESOURCE: {
         label: "Help resource",
         help: "User markup name lookup for user help, or explanation (optional)",
@@ -63,6 +71,7 @@ const READ_WRITE_PARAMS = {
     },
     // 'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'},
 };
+*/
 
 function oneHopRelations(relMeta) {
     console.log("ENTERING: oneHopRelations %o", relMeta);
@@ -86,6 +95,19 @@ function oneHopRelations(relMeta) {
                 //     relMeta.relationID
                 // );
                 console.log("oneHopRelationRelations acc: %o", acc);
+            }
+
+            return acc;
+        }, []);
+    } else if(isNotNull(relMeta) && isNotNull(relMeta.multiHopRelation)){
+        return relMeta.multiHopRelation.reduce(function (acc, oneHop, indx) {
+            if (
+                oneHop.fkClassID == relMeta.fkClassID
+            ) {
+                acc.push(oneHop);
+            }
+            if (relMeta.multiHopRelation > 2) {
+                console.log("multiHopRelation acc: %o", acc);
             }
 
             return acc;
@@ -163,6 +185,7 @@ class ParameterFormComponent extends React.Component {
                 pkClassID: relationModel.pkClassID,
                 pkClassName: relationModel.pkClassName,
                 fqPkClassName: relationModel.fqPkClassName,
+                multiHopRelation: relationModel.multiHopRelation,
             };
         }
         return {};
@@ -226,16 +249,19 @@ class ParameterFormComponent extends React.Component {
             //TARGET_ATTRIBUTE_COLUMN because now we're
             //going to save that too.
 
-            const selectedOption = obj.data.options.filter((opt)=>{opt.fqPkClassName == obj.value});
+            const selectedOption = getFirst(
+                obj.data.options.filter((opt)=>{return opt.fqPkClassName == obj.value})
+            );
+
             console.log("onChange: obj: %o, options: %o, selected: %o", obj, obj.data.options, selectedOption);
 
 
             newState.model.parameters["RELATIONSHIP_TARGET_CLASS"].value = selectedOption.fqPkClassName;
-            //let selectedRel = obj.data.options.filter((r, index) => r.id === selectedValue);
-            console.log("onChange %s, filter to selectedOption: %o, cls: %s, attr: %s", 
+            newState.model.parameters["RELATIONSHIP_TARGET_ATTRIBUTE_COLUMN"].value = selectedOption.fkColumn;
+
+            console.log("onChange val: %s, selectedOption: %o, class: %s, attribute: %s", 
                 obj.value, selectedOption, selectedOption.fqPkClassName, selectedOption.fkColumn
             );
-            newState.model.parameters["RELATIONSHIP_TARGET_ATTRIBUTE_COLUMN"].value = selectedOption.fkColumn;
         }
         newState.model.parameters[obj.parameter].value = obj.value;
         
@@ -421,6 +447,19 @@ class ParameterFormComponent extends React.Component {
                                     onChange={this.onChange}
                                     onReset={this.onResetFilterOptions}
                                     help="This controls the query used to produce the display."
+                                />
+                                <SelectInputGroup
+                                    value={
+                                        this.state.model.parameters[
+                                            "RELATIONSHIP_QUERY_RENDERER"
+                                        ].value
+                                    }
+                                    label="Renderer"
+                                    parameter="RELATIONSHIP_QUERY_RENDERER"
+                                    onChange={this.onChange}
+                                    help="This determines how the query data is rendered."
+                                    options={RENDER_OPTIONS}
+                                    defaultValue=""
                                 />
                                 
                                 {xslField}
