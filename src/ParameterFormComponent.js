@@ -47,12 +47,17 @@ const EDIT_LINK_OPTIONS = [
     { text: "True", value: "true" },
 ];
 
-const READ_WRITE_PARAMS = {};
-/*
-    RELATIONSHIP_HELP_RESOURCE: {
-        label: "Help resource",
-        help: "User markup name lookup for user help, or explanation (optional)",
+const READ_WRITE_PARAMS = {
+    // RELATIONSHIP_HELP_RESOURCE: {
+    //     label: "Help resource",
+    //     help: "User markup name lookup for user help, or explanation (optional)",
+    // },
+    RELATIONSHIP_SOURCE_FILTERS: {
+        label: "Source Filter List",
+        help: "You may add multiple filters for the user's selection (optional). Enter as a JSON array.",
     },
+
+    /*
     RELATIONSHIP_LINK_BUTTON_LABEL: {
         label: "Label for 'Link' button",
         help: 'Customize the label of the "Link" button (optional)',
@@ -60,18 +65,14 @@ const READ_WRITE_PARAMS = {};
     RELATIONSHIP_UNLINK_BUTTON_LABEL: {
         label: "Label for the 'Un-Link' button",
         help: "Customize the lable of the 'Un-Link' button (optional)",
-    },
-    RELATIONSHIP_SOURCE_FILTERS: {
-        label: "Source Filter List",
-        help: "You may add multiple filters for the user's selection (optional). Enter as a JSON array.",
-    },
     RELATIONSHIP_TARGET: {
         label: "Target",
         help: "The target class attrubte for this relationship (optional)",
     },
+    */
     // 'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'},
 };
-*/
+
 
 function oneHopRelations(relMeta) {
     console.log("ENTERING: oneHopRelations %o", relMeta);
@@ -99,19 +100,6 @@ function oneHopRelations(relMeta) {
 
             return acc;
         }, []);
-    } else if(isNotNull(relMeta) && isNotNull(relMeta.multiHopRelation)){
-        return relMeta.multiHopRelation.reduce(function (acc, oneHop, indx) {
-            if (
-                oneHop.fkClassID == relMeta.fkClassID
-            ) {
-                acc.push(oneHop);
-            }
-            if (relMeta.multiHopRelation > 2) {
-                console.log("multiHopRelation acc: %o", acc);
-            }
-
-            return acc;
-        }, []);
     }
     return [];
 }
@@ -121,7 +109,6 @@ function classAttrText(fqClassName, attrName) {
 }
 
 function getRelationshipTarget(relationModel, parameter) {
-
     const oneHops = oneHopRelations(relationModel);
 
     let opts = oneHops.map((oh) => {
@@ -132,10 +119,14 @@ function getRelationshipTarget(relationModel, parameter) {
             attributeName: oh.fkAttributeName,
             attributeId: oh.fkAttrId,
             fkColumn: oh.fkColumn,
-            fqPkClassName: oh.fqPkClassName
+            fqPkClassName: oh.fqPkClassName,
         };
     });
-    console.log("getRelationshipTarget rm: %o, opts: %o", relationModel.oneHopRelation, opts);
+    console.log(
+        "getRelationshipTarget rm: %o, opts: %o",
+        relationModel.oneHopRelation,
+        opts
+    );
     return opts;
 }
 
@@ -185,7 +176,8 @@ class ParameterFormComponent extends React.Component {
                 pkClassID: relationModel.pkClassID,
                 pkClassName: relationModel.pkClassName,
                 fqPkClassName: relationModel.fqPkClassName,
-                multiHopRelation: relationModel.multiHopRelation,
+                fkAid: relationModel.fkAid,
+                fkAttributeName: relationModel.fkAttributeName,
             };
         }
         return {};
@@ -243,11 +235,10 @@ class ParameterFormComponent extends React.Component {
                     this.state.relationID,
                     "RELATIONSHIP_QUERY_LOOKUP"
                 );
-        } 
+        }
+
         if (obj.parameter == "RELATIONSHIP_TARGET_CLASS") {
-            //TODO: need the whole object to also get they
-            //TARGET_ATTRIBUTE_COLUMN because now we're
-            //going to save that too.
+
 
             const selectedOption = getFirst(
                 obj.data.options.filter((opt)=>{return opt.fqPkClassName == obj.value})
@@ -264,7 +255,6 @@ class ParameterFormComponent extends React.Component {
             );
         }
         newState.model.parameters[obj.parameter].value = obj.value;
-        
 
         console.log(
             "ParameterFormComponent.onChange: arg:%o, newState:%o, prevState:%o, %s",
@@ -338,6 +328,16 @@ class ParameterFormComponent extends React.Component {
                             value={this.state.model.name}
                             help=""
                             label="Name"
+                        />
+                        <ReadOnlyInputFormGroup
+                            value={this.state.model.fkAttributeName}
+                            help=""
+                            label="Foreign Key Attribute"
+                        />
+                        <ReadOnlyInputFormGroup
+                            value={this.state.model.fkAid}
+                            help=""
+                            label="Foreign Key Attribute ID"
                         />
                         <ReadWriteInputFormGroup
                             value={
@@ -448,6 +448,7 @@ class ParameterFormComponent extends React.Component {
                                     onReset={this.onResetFilterOptions}
                                     help="This controls the query used to produce the display."
                                 />
+
                                 <SelectInputGroup
                                     value={
                                         this.state.model.parameters[
@@ -461,9 +462,8 @@ class ParameterFormComponent extends React.Component {
                                     options={RENDER_OPTIONS}
                                     defaultValue=""
                                 />
-                                
                                 {xslField}
-                                
+
                             </tab-panel>
 
                             <tab-panel
@@ -492,8 +492,8 @@ class ParameterFormComponent extends React.Component {
                                             "RELATIONSHIP_TARGET_CLASS"
                                         ]
                                             ? this.state.model.parameters[
-                                                "RELATIONSHIP_TARGET_CLASS"
-                                            ].value
+                                                  "RELATIONSHIP_TARGET_CLASS"
+                                              ].value
                                             : null
                                     }
                                     label="Select the target Class for this relationship"
@@ -556,7 +556,7 @@ class ParameterFormComponent extends React.Component {
         evt.preventDefault();
         evt.stopPropagation();
     }
-    oncancel() { }
+    oncancel() {}
 }
 
 export default ParameterFormComponent;
