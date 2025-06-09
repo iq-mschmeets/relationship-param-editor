@@ -16,7 +16,7 @@ class RelationLink extends React.Component {
             display: "flex",
             "justify-content": "space-between",
         };
-        let href = `../request/class?cid=${this.props.classID}`;
+        let href = `../request/classEdit?type_id=14&id=${this.props.classID}`;
         return (
             <li
                 className={cname}
