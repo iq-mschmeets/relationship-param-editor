@@ -59,3 +59,14 @@ h4.section-head{
 .filter-search-list .itemLabel{ }
 .filter-search-list .itemID{ font-size: .8em; font-style: italic; padding-left: 15px;}
 .help-block{ margin-bottom: 10px; font-size: .8em;}
+.rel-props{
+  background-color: #f2f5f9;
+  height: 100%;
+
+
+  #properties-content {
+    background-color: #f2f5f9;
+    margin-top: 1em;
+    padding: 0.5em;
+}
+}

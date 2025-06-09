@@ -35,12 +35,12 @@ const DISPLAY_OPTIONS = [
     { text: "Always expanded", value: true },
 ];
 
-const RENDER_OPTIONS = [
-    { text: "Default", value: "" },
-    { text: "Stamp", value: "stamp" },
-    { text: "Matrix", value: "MATRIX" },
-    { text: "XSLT (legacy only)", value: "xslt" },
-];
+// const RENDER_OPTIONS = [
+//     { text: "Default", value: "" },
+//     { text: "Stamp", value: "stamp" },
+//     { text: "Matrix", value: "MATRIX" },
+//     { text: "XSLT (legacy only)", value: "xslt" },
+// ];
 
 const EDIT_LINK_OPTIONS = [
     { text: "False", value: "false" },
@@ -65,39 +65,31 @@ const READ_WRITE_PARAMS = {
     RELATIONSHIP_UNLINK_BUTTON_LABEL: {
         label: "Label for the 'Un-Link' button",
         help: "Customize the lable of the 'Un-Link' button (optional)",
+    },
+    */
     RELATIONSHIP_TARGET: {
         label: "Target",
         help: "The target class attrubte for this relationship (optional)",
     },
-    */
     // 'RELATIONSHIP_DISPLAY_SELECTOR':{'label' : "Selector", help: 'To place this relationship in a specific place in the page, enter an HTML selector.'},
 };
 
 
 function oneHopRelations(relMeta) {
     console.log("ENTERING: oneHopRelations %o", relMeta);
-    if (isNotNull(relMeta) && isNotNull(relMeta.oneHopRelation)) {
-        return relMeta.oneHopRelation.reduce(function (acc, oneHop, indx) {
-            if (
-                oneHop.fkClassID == relMeta.fkClassID //&&
-                // oneHop.pkClassID != relMeta.pkClassID /*&&
-                //     oneHop.fkClassID != oneHop.pkClassID*/
-            ) {
+    // Prefer multiHopRelation if present and non-empty
+    const rels = Array.isArray(relMeta.multiHopRelation) && relMeta.multiHopRelation.length > 0
+        ? relMeta.multiHopRelation
+        : relMeta.oneHopRelation;
+
+    if (isNotNull(relMeta) && isNotNull(rels)) {
+        return rels.reduce(function (acc, oneHop, indx) {
+            if (oneHop.fkClassID == relMeta.fkClassID) {
                 acc.push(oneHop);
             }
-            if (relMeta.oneHopRelation.length > 2) {
-                // console.log(
-                //     "oFK: %s, rFK: %s, oPK: %s, rPK: %s, oRI: %s, rRI: %s",
-                //     oneHop.fkClassID,
-                //    relMeta.fkClassID,
-                //     oneHop.pkClassID,
-                //     relMeta.pkClassID,
-                //     oneHop.relationID,
-                //     relMeta.relationID
-                // );
-                console.log("oneHopRelationRelations acc: %o", acc);
+            if (rels.length > 2) {
+                console.log("oneHopRelationRelations len>2 acc: %o", acc);
             }
-
             return acc;
         }, []);
     }
@@ -150,10 +142,10 @@ class ParameterFormComponent extends React.Component {
     }
 
     initModel(relationModel) {
-        console.log("ParameterFormComponent.initModel: %o", relationModel);
+        // console.log("ParameterFormComponent.initModel: %o", relationModel);
         if (relationModel) {
             const params = defaultParameterSetFactory(relationModel.relationID);
-            console.log("ParmeterFormComponent.initModel2 %o", params);
+            // console.log("ParmeterFormComponent.initModel2 %o", params);
 
             Object.keys(relationModel.displayParams).forEach((key) => {
                 const param = params[key];
@@ -171,7 +163,7 @@ class ParameterFormComponent extends React.Component {
                 relationID: relationModel.relationID,
                 name: relationModel.name,
                 parameters: params,
-                oneHopRelation: relationModel.oneHopRelation,
+                oneHopRelation: relationModel.oneHopRelation || relationModel.multiHopRelation,
                 fkClassID: relationModel.fkClassID,
                 pkClassID: relationModel.pkClassID,
                 pkClassName: relationModel.pkClassName,
@@ -192,7 +184,7 @@ class ParameterFormComponent extends React.Component {
     }
 
     onok() {
-        console.log("ParameterFormComponent.onOK: %o", this.state);
+        // console.log("ParameterFormComponent.onOK: %o", this.state);
         if (this.props.onSave) {
             this.props.onSave(this.state.model.parameters);
         }
@@ -238,21 +230,17 @@ class ParameterFormComponent extends React.Component {
         }
 
         if (obj.parameter == "RELATIONSHIP_TARGET_CLASS") {
-
-
             const selectedOption = getFirst(
                 obj.data.options.filter((opt)=>{return opt.fqPkClassName == obj.value})
             );
-
-            console.log("onChange: obj: %o, options: %o, selected: %o", obj, obj.data.options, selectedOption);
-
+            // console.log("onChange: obj: %o, options: %o, selected: %o", obj, obj.data.options, selectedOption);
 
             newState.model.parameters["RELATIONSHIP_TARGET_CLASS"].value = selectedOption.fqPkClassName;
             newState.model.parameters["RELATIONSHIP_TARGET_ATTRIBUTE_COLUMN"].value = selectedOption.fkColumn;
 
-            console.log("onChange val: %s, selectedOption: %o, class: %s, attribute: %s", 
+          /*   console.log("onChange val: %s, selectedOption: %o, class: %s, attribute: %s",
                 obj.value, selectedOption, selectedOption.fqPkClassName, selectedOption.fkColumn
-            );
+            // ); */
         }
         newState.model.parameters[obj.parameter].value = obj.value;
 
@@ -269,50 +257,10 @@ class ParameterFormComponent extends React.Component {
     render() {
         //console.log("ParameterFormComponent.render: %o, %o",this.props.model, this.state.model);
         //TODO: Use RELATIONSHIP_QUERY_LOOKUP too.
-        console.log("ParameterFormComponent.render: %o", this.state);
         if (this.props.model) {
             let xslField = null;
             let renderField = null;
-            // Don't show an XSLT selector if we're using the defualt query?
-            // Is this correct, or should it always be an option?
-            // No, only for optional queries, for now.
-            if (
-                (this.state.model.parameters["RELATIONSHIP_QUERY_ID"].value ||
-                    this.state.model.parameters["RELATIONSHIP_QUERY_LOOKUP"]
-                        .value) &&
-                this.state.model.parameters["RELATIONSHIP_QUERY_RENDERER"]
-                    .value == "xslt"
-            ) {
-                xslField = (
-                    <XformSelectionInput
-                        value={
-                            this.state.model.parameters[
-                                "RELATIONSHIP_QUERY_XFORM"
-                            ].value || ""
-                        }
-                        label="XSLT Xform"
-                        parameter="RELATIONSHIP_QUERY_XFORM"
-                        onChange={this.onChange}
-                        help="This controls the (optional) XSLT used to produce the display from the query."
-                    />
-                );
-            } else if (
-                this.state.model.parameters["RELATIONSHIP_QUERY_RENDERER"]
-                    .value == "stamp"
-            ) {
-                //TODO: Need to build the Stamp Editor Panel...
-                xslField = (
-                    <StampPropertyEditor
-                        params={this.state.model.parameters}
-                        onChange={this.onChange}
-                    />
-                );
-            }
-            const relatedTargets = getRelationshipTarget(this.state.model);
-            console.log(
-                "ParameterFormComponent.render relatedTargets %o",
-                relatedTargets
-            );
+                const relatedTargets = getRelationshipTarget(this.state.model);
 
             return (
                 <div>
@@ -448,22 +396,6 @@ class ParameterFormComponent extends React.Component {
                                     onReset={this.onResetFilterOptions}
                                     help="This controls the query used to produce the display."
                                 />
-
-                                <SelectInputGroup
-                                    value={
-                                        this.state.model.parameters[
-                                            "RELATIONSHIP_QUERY_RENDERER"
-                                        ].value
-                                    }
-                                    label="Renderer"
-                                    parameter="RELATIONSHIP_QUERY_RENDERER"
-                                    onChange={this.onChange}
-                                    help="This determines how the query data is rendered."
-                                    options={RENDER_OPTIONS}
-                                    defaultValue=""
-                                />
-                                {xslField}
-
                             </tab-panel>
 
                             <tab-panel
