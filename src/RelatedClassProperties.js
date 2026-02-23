@@ -89,13 +89,13 @@ console.log( "RelatedClassProperties.PS-SAVE: %o", rsp )
     render() {
         console.log("RelatedClassProperties.render: props: %o", this.props);
         return (
-            <div className="row">
-                <div className="col-xs-3">
+            <div className="rel-props-container">
+                <div className="class-list-col">
                     <RelatedClassList models={this.props.models}
                                       update={this.handleClassSelection}
                                       reorder={this.reorder}/>
                 </div>
-                <div className="col-xs-9">
+                <div className="class-form-col">
                     <ParameterFormComponent model={this.getSelectedModel()}
                                             onSave={this.onSave}
                                             saving={this.state.saving}/>
