@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relationship Parameter Editor - Demo</title>
+  
+  <!-- CSS Variables -->
+  <link rel="stylesheet" href="./src/styles/variables.css">
+  
+  <!-- Import map for dependencies -->
+  <script type="importmap">
+  {
+    "imports": {
+      "relationship-param-editor": "./src/index.js"
+    }
+  }
+  </script>
+</head>
+<body style="font-family: system-ui, sans-serif; margin: 20px;">
+  <h1>Relationship Parameter Editor</h1>
+  
+  <relation-param-editor class-id="31"></relation-param-editor>
+  
+  <script type="module">
+    import 'relationship-param-editor';
+    
+    const editor = document.querySelector('relation-param-editor');
+    
+    // Listen for events
+    editor.addEventListener('class-selected', (e) => {
+      console.log('Class selected:', e.detail);
+    });
+    
+    editor.addEventListener('parameters-changed', (e) => {
+      console.log('Parameter changed:', e.detail);
+    });
+    
+    editor.addEventListener('parameters-saved', (e) => {
+      if (e.detail.success) {
+        console.log('Saved successfully:', e.detail.response);
+      } else {
+        console.error('Save failed:', e.detail.error);
+      }
+    });
+  </script>
+</body>
+</html>

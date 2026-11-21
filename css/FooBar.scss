@@ -80,3 +80,17 @@ li.placeholder:before {
 }
 
 .rel-props{ margin-left: 10px;}
+
+.rel-props-container{
+  display:flex;
+  height:100%;
+  gap: 1.5em;
+}
+.class-list-col{
+  width:30%;
+  height: 100%;
+}
+.class-form-col{
+  width:70%;
+  height:100%;
+}

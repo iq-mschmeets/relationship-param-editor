@@ -1,27 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import postal from 'postal';
-//import registerServiceWorker from './registerServiceWorker';
-import RelationParamEditor from './RelationParamEditor';
-import EditButton from './common/EditButton';
-import './index.css';
+// Import all components to register them
+import './components/FormReadonly.js';
+import './components/FormInput.js';
+import './components/FormSelect.js';
+import './components/OkCancelButtons.js';
+import './components/PanelWrapper.js';
+import './components/RelationLink.js';
+import './components/RelatedClassList.js';
+import './components/ParameterForm.js';
+import './components/RelatedClassProperties.js';
+import './components/RelationParamEditor.js';
 
-export default RelationParamEditor;
-//export {UserMarkupIncludes as UserMarkupIncludes };
-export { EditButton as EditButton };
-const PageBus = window.PageBus;
+// Export components for programmatic access
+export { default as FormReadonly } from './components/FormReadonly.js';
+export { default as FormInput } from './components/FormInput.js';
+export { default as FormSelect } from './components/FormSelect.js';
+export { default as OkCancelButtons } from './components/OkCancelButtons.js';
+export { default as PanelWrapper } from './components/PanelWrapper.js';
+export { default as RelationLink } from './components/RelationLink.js';
+export { default as RelatedClassList } from './components/RelatedClassList.js';
+export { default as ParameterForm } from './components/ParameterForm.js';
+export { default as RelatedClassProperties } from './components/RelatedClassProperties.js';
+export { default as RelationParamEditor } from './components/RelationParamEditor.js';
 
-// Test data.
-const models = [
-    {pkColumn: "ELEMENT_ID", name: "Project Person-->Person", pkClassName: "Person", fkClassID: 55,
-    fkClassName:"Project Person",fkColumn:"PERSON_ID",
-    displayParameters:{RELATIONSHIP_LABEL: "Portfolio Projects this Person participates in"},
-    pkClassID:31,relationID:67
-    },
-    {fkClassID:53,fkClassName:"Project Organization",fkColumn:"ORGANIZATION_ID",
-    name:"Project Organization-->Organization",displayParameters:{'RELATIONSHIP_QUERY_ID' : 1045},
-    pkClassID:34,pkClassName:"Organization",pkColumn:"ELEMENT_ID",relationID:65
-    }
-];
+// Export utilities
+export * from './utils/Events.js';
+export { default as ParameterObject, defaultParameterSetFactory, getNullParameter, isNotNull, defaultProperty } from './models/ParameterObject.js';
+export { default as ClassService } from './services/ClassService.js';
+export { default as ParameterService } from './services/ParameterService.js';
+export { default as FilterSearchService } from './services/FilterSearchService.js';
+export { default as getMessageFromError } from './utils/XHRError.js';
 
-//registerServiceWorker();
+// Default export is the main component
+export { default } from './components/RelationParamEditor.js';
